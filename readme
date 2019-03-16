@@ -1,1 +1,13 @@
+DA-03s V2.0 DAC board
 
+AK4490 -> OPA1632 ->OPA2134(1).
+
+Firmware for Atmega 48
+
+MCU control for AK4490 DAC (single chip).
+
+I2C addressing.
+
+USB Transport: UI-01 (XMOS XUF208 MCU).
+
+https://promservice63.ru/audio
