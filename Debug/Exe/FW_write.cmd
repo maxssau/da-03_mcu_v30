@@ -1,0 +1,1 @@
+avrdude -p m48 -B 10 -c usbasp -U flash:w:201810131.hex

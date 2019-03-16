@@ -1,0 +1,64 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+dac_reg                                                                           0x0180      22
+rx_buffer0                                                                        0x0196       8
+tx_buffer0                                                                        0x019E       8
+tx_rd_index0                                                                      0x01A6       1
+tx_counter0                                                                       0x01A7       1
+twi_tx_index                                                                      0x01A8       1
+twi_rx_index                                                                      0x01A9       1
+twi_result                                                                        0x01AA       1
+slave_address                                                                     0x01AB       1
+twi_tx_buffer                                                                     0x01AC       2
+bytes_to_tx                                                                       0x01AE       1
+twi_rx_buffer                                                                     0x01AF       2
+bytes_to_rx                                                                       0x01B1       1
+twi_rx_buffer_size                                                                0x01B2       1
+twi_slave_rx_handler                                                              0x01B3       2
+twi_slave_tx_handler                                                              0x01B5       2
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+j                                                                                 R3,R4        2
+c                                                                                 R6           1
+StartUp                                                                           R5           1
+i2c_address                                                                       R8           1
+last_SR                                                                           R7           1
+last_DF                                                                           R10          1
+last_mute                                                                         R9           1
+rx_wr_index0                                                                      R12          1
+rx_rd_index0                                                                      R11          1
+rx_counter0                                                                       R14          1
+rx_buffer_overflow0                                                               GPIOR0.0  1bit
+tx_wr_index0                                                                      R13          1
+twi_flag                                                                          GPIOR0.1  1bit
+twi_ready                                                                         GPIOR0.2  1bit
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+_setbit                                                                           0x000BC      4
+_clrbit                                                                           0x000C0      6
+usart_rx_isr                                                                      0x000C6     88
+usart_tx_isr                                                                      0x0011E     37
+putchar                                                                           0x00143     34
+main                                                                              0x00165    292
+Write_To_DAC                                                                      0x00289     38
+SampleRateCheck                                                                   0x002AF     95
+ResetChip                                                                         0x0030E      7
+DF_Check                                                                          0x00315     36
+SW_Mute                                                                           0x00339     20
+put_usart_G100                                                                    0x0034D     11
+_print_G100                                                                       0x00358    279
+printf                                                                            0x0046F     30
+twi_master_init                                                                   0x0048D     44
+twi_master_trans                                                                  0x004B9    101
+twi_int_handler                                                                   0x0051E    378
+strlen                                                                            0x00698     11
+strlenf                                                                           0x006A3     12

@@ -1,0 +1,60 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+dac_reg                                                                           0x0180      22
+rx_buffer0                                                                        0x0196       8
+tx_buffer0                                                                        0x019E       8
+twi_tx_index                                                                      0x01A6       1
+twi_rx_index                                                                      0x01A7       1
+twi_result                                                                        0x01A8       1
+slave_address                                                                     0x01A9       1
+twi_tx_buffer                                                                     0x01AA       2
+bytes_to_tx                                                                       0x01AC       1
+twi_rx_buffer                                                                     0x01AD       2
+bytes_to_rx                                                                       0x01AF       1
+twi_rx_buffer_size                                                                0x01B0       1
+twi_slave_rx_handler                                                              0x01B1       2
+twi_slave_tx_handler                                                              0x01B3       2
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+StartUp                                                                           R4           1
+i2c_address                                                                       R3           1
+last_SR                                                                           R6           1
+last_DF                                                                           R5           1
+rx_wr_index0                                                                      R8           1
+rx_rd_index0                                                                      R7           1
+rx_counter0                                                                       R10          1
+rx_buffer_overflow0                                                               GPIOR0.0  1bit
+tx_wr_index0                                                                      R9           1
+tx_rd_index0                                                                      R12          1
+tx_counter0                                                                       R11          1
+twi_flag                                                                          GPIOR0.1  1bit
+twi_ready                                                                         GPIOR0.2  1bit
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+_setbit                                                                           0x00090      4
+_clrbit                                                                           0x00094      6
+usart_rx_isr                                                                      0x0009A     88
+usart_tx_isr                                                                      0x000F2     24
+putchar                                                                           0x0010A     29
+main                                                                              0x00127    232
+Write_To_DAC                                                                      0x0020F     25
+SampleRateCheck                                                                   0x00228     77
+ResetChip                                                                         0x00275     11
+DF_Check                                                                          0x00280     44
+put_usart_G100                                                                    0x002AC     11
+_print_G100                                                                       0x002B7    279
+printf                                                                            0x003CE     30
+twi_master_init                                                                   0x003EC     44
+twi_master_trans                                                                  0x00418    101
+twi_int_handler                                                                   0x0047D    378
+strlen                                                                            0x005F7     11
+strlenf                                                                           0x00602     12
