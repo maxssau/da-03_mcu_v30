@@ -2,7 +2,7 @@ DA-03s V2.0 DAC board
 
 AK4490 -> OPA1632 ->OPA2134(1).
 
-Firmware for Atmega 48
+Firmware for Atmega 48, Codevision 3.12 compiler
 
 MCU control for AK4490 DAC (single chip).
 
