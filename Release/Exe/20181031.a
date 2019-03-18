@@ -1,7 +1,7 @@
 ;
 ;void Write_To_DAC (unsigned char,unsigned char,unsigned char);
 ;void SampleRateCheck(unsigned char);
-;void ResetChip();
+;void ResetChip(unsigned char);
 ;void DF_Check();
 ;char getchar(void);
 ;void putchar(char);
@@ -722,29 +722,30 @@
 ; 0000 014D             DAC_reset=1;
 ;PCODE: $00000167 VOL: 0
 ;PCODE: $00000168 VOL: 0
-; 0000 014E             delay_ms(100);
+; 0000 014E             ResetChip(0);
 ;PCODE: $00000169 VOL: 0
 ;PCODE: $0000016A VOL: 0
+; 0000 014F             delay_ms(100);
 ;PCODE: $0000016B VOL: 0
-; 0000 014F             SW_Mute(1);
 ;PCODE: $0000016C VOL: 0
 ;PCODE: $0000016D VOL: 0
-; 0000 0150             if(_4493)
+; 0000 0150             SW_Mute(1);
 ;PCODE: $0000016E VOL: 0
 ;PCODE: $0000016F VOL: 0
+; 0000 0151             if(_4493)
 ;PCODE: $00000170 VOL: 0
-; 0000 0151             {
-; 0000 0152                 // 4493 mode
-; 0000 0153                 char i=0;
-; 0000 0154                 for(i=0;i<22;i++)
 ;PCODE: $00000171 VOL: 0
 ;PCODE: $00000172 VOL: 0
+; 0000 0152             {
+; 0000 0153                 // 4493 mode
+; 0000 0154                 char i=0;
+; 0000 0155                 for(i=0;i<22;i++)
 ;PCODE: $00000173 VOL: 0
+;PCODE: $00000174 VOL: 0
+;PCODE: $00000175 VOL: 0
 ;	j -> Y+3
 ;	i -> Y+1
 ;	i -> Y+0
-;PCODE: $00000174 VOL: 0
-;PCODE: $00000175 VOL: 0
 ;PCODE: $00000176 VOL: 0
 ;PCODE: $00000177 VOL: 0
 ;PCODE: $00000178 VOL: 0
@@ -753,50 +754,50 @@
 ;PCODE: $0000017B VOL: 0
 ;PCODE: $0000017C VOL: 0
 ;PCODE: $0000017D VOL: 0
-; 0000 0155                 {
-; 0000 0156                     // write default values to dac
-; 0000 0157                     dac_reg[i]=_4493_def_values[i];
 ;PCODE: $0000017E VOL: 0
 ;PCODE: $0000017F VOL: 0
+; 0000 0156                 {
+; 0000 0157                     // write default values to dac
+; 0000 0158                     dac_reg[i]=_4493_def_values[i];
 ;PCODE: $00000180 VOL: 0
 ;PCODE: $00000181 VOL: 0
 ;PCODE: $00000182 VOL: 0
 ;PCODE: $00000183 VOL: 0
 ;PCODE: $00000184 VOL: 0
 ;PCODE: $00000185 VOL: 0
-; 0000 0158                 }
 ;PCODE: $00000186 VOL: 0
 ;PCODE: $00000187 VOL: 0
+; 0000 0159                 }
 ;PCODE: $00000188 VOL: 0
 ;PCODE: $00000189 VOL: 0
 ;PCODE: $0000018A VOL: 0
 ;PCODE: $0000018B VOL: 0
-; 0000 0159             }
 ;PCODE: $0000018C VOL: 0
-; 0000 015A             else
 ;PCODE: $0000018D VOL: 0
+; 0000 015A             }
 ;PCODE: $0000018E VOL: 0
-; 0000 015B             {
-; 0000 015C                 // 4490 mode
-; 0000 015D                 char i=0;
-; 0000 015E 
-; 0000 015F                 printf("4490 mode\n\r");
+; 0000 015B             else
 ;PCODE: $0000018F VOL: 0
 ;PCODE: $00000190 VOL: 0
+; 0000 015C             {
+; 0000 015D                 // 4490 mode
+; 0000 015E                 char i=0;
+; 0000 015F 
+; 0000 0160                 printf("4490 mode\n\r");
 ;PCODE: $00000191 VOL: 0
+;PCODE: $00000192 VOL: 0
+;PCODE: $00000193 VOL: 0
 ;	j -> Y+3
 ;	i -> Y+1
 ;	i -> Y+0
-;PCODE: $00000192 VOL: 0
-;PCODE: $00000193 VOL: 0
 ;PCODE: $00000194 VOL: 0
 ;PCODE: $00000195 VOL: 0
 ;PCODE: $00000196 VOL: 0
 ;PCODE: $00000197 VOL: 0
 ;PCODE: $00000198 VOL: 0
-; 0000 0160                 for(i=0;i<10;i++)
 ;PCODE: $00000199 VOL: 0
 ;PCODE: $0000019A VOL: 0
+; 0000 0161                 for(i=0;i<10;i++)
 ;PCODE: $0000019B VOL: 0
 ;PCODE: $0000019C VOL: 0
 ;PCODE: $0000019D VOL: 0
@@ -805,66 +806,66 @@
 ;PCODE: $000001A0 VOL: 0
 ;PCODE: $000001A1 VOL: 0
 ;PCODE: $000001A2 VOL: 0
-; 0000 0161                 {
-; 0000 0162                     dac_reg[i]=_4490_def_values[i];
 ;PCODE: $000001A3 VOL: 0
 ;PCODE: $000001A4 VOL: 0
+; 0000 0162                 {
+; 0000 0163                     dac_reg[i]=_4490_def_values[i];
 ;PCODE: $000001A5 VOL: 0
 ;PCODE: $000001A6 VOL: 0
 ;PCODE: $000001A7 VOL: 0
 ;PCODE: $000001A8 VOL: 0
 ;PCODE: $000001A9 VOL: 0
 ;PCODE: $000001AA VOL: 0
-; 0000 0163                     Write_To_DAC(i2c_address,i,dac_reg[i]);
 ;PCODE: $000001AB VOL: 0
 ;PCODE: $000001AC VOL: 0
+; 0000 0164                     Write_To_DAC(i2c_address,i,dac_reg[i]);
 ;PCODE: $000001AD VOL: 0
 ;PCODE: $000001AE VOL: 0
 ;PCODE: $000001AF VOL: 0
 ;PCODE: $000001B0 VOL: 0
 ;PCODE: $000001B1 VOL: 0
 ;PCODE: $000001B2 VOL: 0
-; 0000 0164                 }
 ;PCODE: $000001B3 VOL: 0
 ;PCODE: $000001B4 VOL: 0
+; 0000 0165                 }
 ;PCODE: $000001B5 VOL: 0
 ;PCODE: $000001B6 VOL: 0
 ;PCODE: $000001B7 VOL: 0
 ;PCODE: $000001B8 VOL: 0
-; 0000 0165             }
 ;PCODE: $000001B9 VOL: 0
 ;PCODE: $000001BA VOL: 0
-; 0000 0166 
-; 0000 0167             delay_ms(50);
+; 0000 0166             }
 ;PCODE: $000001BB VOL: 0
 ;PCODE: $000001BC VOL: 0
+; 0000 0167 
+; 0000 0168             delay_ms(50);
 ;PCODE: $000001BD VOL: 0
-; 0000 0168             StartUp=1;
 ;PCODE: $000001BE VOL: 0
 ;PCODE: $000001BF VOL: 0
-; 0000 0169             ResetChip();
+; 0000 0169             StartUp=1;
 ;PCODE: $000001C0 VOL: 0
-; 0000 016A             SW_Mute(0);
 ;PCODE: $000001C1 VOL: 0
+; 0000 016A             ResetChip(1);
 ;PCODE: $000001C2 VOL: 0
-; 0000 016B         }
 ;PCODE: $000001C3 VOL: 0
-; 0000 016C         else
+; 0000 016B             SW_Mute(0);
 ;PCODE: $000001C4 VOL: 0
 ;PCODE: $000001C5 VOL: 0
-; 0000 016D         {
-; 0000 016E             // normal work
-; 0000 016F             unsigned char _SR=1*F1+2*F2; //calculate current mode
-; 0000 0170 
-; 0000 0171             unsigned char _DF=SSLOW*1+SD*2+SLOW*4;
-; 0000 0172 
-; 0000 0173             if(last_mute!=Mute)
+; 0000 016C         }
 ;PCODE: $000001C6 VOL: 0
-;	_SR -> Y+1
-;	_DF -> Y+0
+; 0000 016D         else
 ;PCODE: $000001C7 VOL: 0
 ;PCODE: $000001C8 VOL: 0
+; 0000 016E         {
+; 0000 016F             // normal work
+; 0000 0170             unsigned char _SR=1*F1+2*F2; //calculate current mode
+; 0000 0171 
+; 0000 0172             unsigned char _DF=SSLOW*1+SD*2+SLOW*4;
+; 0000 0173 
+; 0000 0174             if(last_mute!=Mute)
 ;PCODE: $000001C9 VOL: 0
+;	_SR -> Y+1
+;	_DF -> Y+0
 ;PCODE: $000001CA VOL: 0
 ;PCODE: $000001CB VOL: 0
 ;PCODE: $000001CC VOL: 0
@@ -893,22 +894,22 @@
 ;PCODE: $000001E3 VOL: 0
 ;PCODE: $000001E4 VOL: 0
 ;PCODE: $000001E5 VOL: 0
-; 0000 0174             {
-; 0000 0175                 last_mute=Mute;
 ;PCODE: $000001E6 VOL: 0
 ;PCODE: $000001E7 VOL: 0
 ;PCODE: $000001E8 VOL: 0
-; 0000 0176                 SW_Mute(Mute);
+; 0000 0175             {
+; 0000 0176                 last_mute=Mute;
 ;PCODE: $000001E9 VOL: 0
 ;PCODE: $000001EA VOL: 0
 ;PCODE: $000001EB VOL: 0
-; 0000 0177             }
-; 0000 0178 
-; 0000 0179             // Samplerate check
-; 0000 017A             if((_SR+F0)!=last_SR)
+; 0000 0177                 SW_Mute(Mute);
 ;PCODE: $000001EC VOL: 0
 ;PCODE: $000001ED VOL: 0
 ;PCODE: $000001EE VOL: 0
+; 0000 0178             }
+; 0000 0179 
+; 0000 017A             // Samplerate check
+; 0000 017B             if((_SR+F0)!=last_SR)
 ;PCODE: $000001EF VOL: 0
 ;PCODE: $000001F0 VOL: 0
 ;PCODE: $000001F1 VOL: 0
@@ -917,93 +918,95 @@
 ;PCODE: $000001F4 VOL: 0
 ;PCODE: $000001F5 VOL: 0
 ;PCODE: $000001F6 VOL: 0
-; 0000 017B             {
-; 0000 017C                 SW_Mute(1);
 ;PCODE: $000001F7 VOL: 0
 ;PCODE: $000001F8 VOL: 0
-; 0000 017D                 SampleRateCheck(_SR);
 ;PCODE: $000001F9 VOL: 0
+; 0000 017C             {
+; 0000 017D                 ResetChip(0);
 ;PCODE: $000001FA VOL: 0
-; 0000 017E                 last_SR=_SR+F0;
 ;PCODE: $000001FB VOL: 0
+; 0000 017E                 SW_Mute(1);
 ;PCODE: $000001FC VOL: 0
 ;PCODE: $000001FD VOL: 0
+; 0000 017F                 SampleRateCheck(_SR);
 ;PCODE: $000001FE VOL: 0
 ;PCODE: $000001FF VOL: 0
-; 0000 017F                 if(!_4493)
+; 0000 0180                 last_SR=_SR+F0;
 ;PCODE: $00000200 VOL: 0
 ;PCODE: $00000201 VOL: 0
 ;PCODE: $00000202 VOL: 0
-; 0000 0180                 {
-; 0000 0181                     // strong check unsupported mode:
-; 0000 0182                     // AK4490 does not support DSD512 mode
-; 0000 0183                     if(_SR>11)
 ;PCODE: $00000203 VOL: 0
 ;PCODE: $00000204 VOL: 0
+; 0000 0181                 if(!_4493)
 ;PCODE: $00000205 VOL: 0
-; 0000 0184                     {
-; 0000 0185                         SW_Mute(1);
 ;PCODE: $00000206 VOL: 0
 ;PCODE: $00000207 VOL: 0
-; 0000 0186                     }
-; 0000 0187                     else
+; 0000 0182                 {
+; 0000 0183                     // strong check unsupported mode:
+; 0000 0184                     // AK4490 does not support DSD512 mode
+; 0000 0185                     if(_SR>11)
 ;PCODE: $00000208 VOL: 0
 ;PCODE: $00000209 VOL: 0
-; 0000 0188                     {
-; 0000 0189                         SW_Mute(0);
 ;PCODE: $0000020A VOL: 0
+; 0000 0186                     {
+; 0000 0187                         SW_Mute(1);
 ;PCODE: $0000020B VOL: 0
-; 0000 018A                     }
 ;PCODE: $0000020C VOL: 0
-; 0000 018B                 }
-; 0000 018C                 else
+; 0000 0188                     }
+; 0000 0189                     else
 ;PCODE: $0000020D VOL: 0
 ;PCODE: $0000020E VOL: 0
-; 0000 018D                 {
-; 0000 018E                     SW_Mute(0);
+; 0000 018A                     {
+; 0000 018B                         SW_Mute(0);
 ;PCODE: $0000020F VOL: 0
 ;PCODE: $00000210 VOL: 0
-; 0000 018F                 }
+; 0000 018C                     }
 ;PCODE: $00000211 VOL: 0
-; 0000 0190                 printf("Current mode: %i\n\r", _SR);
+; 0000 018D                 }
+; 0000 018E                 else
 ;PCODE: $00000212 VOL: 0
 ;PCODE: $00000213 VOL: 0
+; 0000 018F                 {
+; 0000 0190                     SW_Mute(0);
 ;PCODE: $00000214 VOL: 0
 ;PCODE: $00000215 VOL: 0
+; 0000 0191                 }
 ;PCODE: $00000216 VOL: 0
+; 0000 0192                 printf("Current mode: %i\n\r", _SR);
 ;PCODE: $00000217 VOL: 0
 ;PCODE: $00000218 VOL: 0
 ;PCODE: $00000219 VOL: 0
 ;PCODE: $0000021A VOL: 0
 ;PCODE: $0000021B VOL: 0
-; 0000 0191             };
 ;PCODE: $0000021C VOL: 0
-; 0000 0192 
-; 0000 0193 
-; 0000 0194             if(_DF!=last_DF)
 ;PCODE: $0000021D VOL: 0
 ;PCODE: $0000021E VOL: 0
 ;PCODE: $0000021F VOL: 0
-; 0000 0195             {
-; 0000 0196                 SW_Mute(1);
 ;PCODE: $00000220 VOL: 0
+; 0000 0193                 ResetChip(1);
 ;PCODE: $00000221 VOL: 0
-; 0000 0197                 DF_Check();
 ;PCODE: $00000222 VOL: 0
-; 0000 0198                 ResetChip();
+; 0000 0194             };
 ;PCODE: $00000223 VOL: 0
-; 0000 0199                 last_DF=_DF;
+; 0000 0195 
+; 0000 0196 
+; 0000 0197             if(_DF!=last_DF)
 ;PCODE: $00000224 VOL: 0
 ;PCODE: $00000225 VOL: 0
-; 0000 019A                 printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n\r",SLOW,SD,SSLOW);
 ;PCODE: $00000226 VOL: 0
+; 0000 0198             {
+; 0000 0199                 ResetChip(0);
 ;PCODE: $00000227 VOL: 0
 ;PCODE: $00000228 VOL: 0
+; 0000 019A                 SW_Mute(1);
 ;PCODE: $00000229 VOL: 0
 ;PCODE: $0000022A VOL: 0
+; 0000 019B                 DF_Check();
 ;PCODE: $0000022B VOL: 0
+; 0000 019C                 last_DF=_DF;
 ;PCODE: $0000022C VOL: 0
 ;PCODE: $0000022D VOL: 0
+; 0000 019D                 printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n\r",SLOW,SD,SSLOW);
 ;PCODE: $0000022E VOL: 0
 ;PCODE: $0000022F VOL: 0
 ;PCODE: $00000230 VOL: 0
@@ -1015,64 +1018,63 @@
 ;PCODE: $00000236 VOL: 0
 ;PCODE: $00000237 VOL: 0
 ;PCODE: $00000238 VOL: 0
-; 0000 019B                 SW_Mute(0);
 ;PCODE: $00000239 VOL: 0
 ;PCODE: $0000023A VOL: 0
-; 0000 019C             }
-; 0000 019D         }
 ;PCODE: $0000023B VOL: 0
 ;PCODE: $0000023C VOL: 0
 ;PCODE: $0000023D VOL: 0
-; 0000 019E       }
 ;PCODE: $0000023E VOL: 0
 ;PCODE: $0000023F VOL: 0
-; 0000 019F }
 ;PCODE: $00000240 VOL: 0
+; 0000 019E                 ResetChip(1);
 ;PCODE: $00000241 VOL: 0
 ;PCODE: $00000242 VOL: 0
-;
-;void Write_To_DAC(unsigned char chip_address, unsigned char address, unsigned char data)
-; 0000 01A2 {
+; 0000 019F                 SW_Mute(0);
 ;PCODE: $00000243 VOL: 0
 ;PCODE: $00000244 VOL: 0
-; 0000 01A3     char i=0;
-; 0000 01A4     struct _data
-; 0000 01A5     {
-; 0000 01A6         unsigned char lsb;
-; 0000 01A7         unsigned char data;
-; 0000 01A8     } DAC_REG;
-; 0000 01A9     DAC_REG.lsb=address;
+; 0000 01A0             }
+; 0000 01A1         }
 ;PCODE: $00000245 VOL: 0
 ;PCODE: $00000246 VOL: 0
 ;PCODE: $00000247 VOL: 0
+; 0000 01A2       }
+;PCODE: $00000248 VOL: 0
+;PCODE: $00000249 VOL: 0
+; 0000 01A3 }
+;PCODE: $0000024A VOL: 0
+;PCODE: $0000024B VOL: 0
+;PCODE: $0000024C VOL: 0
+;
+;void Write_To_DAC(unsigned char chip_address, unsigned char address, unsigned char data)
+; 0000 01A6 {
+;PCODE: $0000024D VOL: 0
+;PCODE: $0000024E VOL: 0
+; 0000 01A7     char i=0;
+; 0000 01A8     struct _data
+; 0000 01A9     {
+; 0000 01AA         unsigned char lsb;
+; 0000 01AB         unsigned char data;
+; 0000 01AC     } DAC_REG;
+; 0000 01AD     DAC_REG.lsb=address;
+;PCODE: $0000024F VOL: 0
+;PCODE: $00000250 VOL: 0
+;PCODE: $00000251 VOL: 0
 ;	chip_address -> Y+5
 ;	address -> Y+4
 ;	data -> Y+3
 ;	i -> R17
 ;	_data -> Y+3
 ;	DAC_REG -> Y+1
-;PCODE: $00000248 VOL: 0
-;PCODE: $00000249 VOL: 0
-;PCODE: $0000024A VOL: 0
-;PCODE: $0000024B VOL: 0
-; 0000 01AA     DAC_REG.data=data;
-;PCODE: $0000024C VOL: 0
-;PCODE: $0000024D VOL: 0
-; 0000 01AB     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,2,0,0))
-;PCODE: $0000024E VOL: 0
-;PCODE: $0000024F VOL: 0
-;PCODE: $00000250 VOL: 0
-;PCODE: $00000251 VOL: 0
 ;PCODE: $00000252 VOL: 0
 ;PCODE: $00000253 VOL: 0
 ;PCODE: $00000254 VOL: 0
 ;PCODE: $00000255 VOL: 0
+; 0000 01AE     DAC_REG.data=data;
 ;PCODE: $00000256 VOL: 0
 ;PCODE: $00000257 VOL: 0
+; 0000 01AF     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,2,0,0))
 ;PCODE: $00000258 VOL: 0
 ;PCODE: $00000259 VOL: 0
-; 0000 01AC     {
-; 0000 01AD         printf("write error!\n\r");
 ;PCODE: $0000025A VOL: 0
 ;PCODE: $0000025B VOL: 0
 ;PCODE: $0000025C VOL: 0
@@ -1080,27 +1082,27 @@
 ;PCODE: $0000025E VOL: 0
 ;PCODE: $0000025F VOL: 0
 ;PCODE: $00000260 VOL: 0
-; 0000 01AE     }
-; 0000 01AF     delay_ms(200);
 ;PCODE: $00000261 VOL: 0
 ;PCODE: $00000262 VOL: 0
 ;PCODE: $00000263 VOL: 0
+; 0000 01B0     {
+; 0000 01B1         printf("write error!\n\r");
 ;PCODE: $00000264 VOL: 0
-; 0000 01B0     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,1,&c,1))
 ;PCODE: $00000265 VOL: 0
 ;PCODE: $00000266 VOL: 0
 ;PCODE: $00000267 VOL: 0
 ;PCODE: $00000268 VOL: 0
 ;PCODE: $00000269 VOL: 0
 ;PCODE: $0000026A VOL: 0
+; 0000 01B2     }
+; 0000 01B3     delay_ms(200);
 ;PCODE: $0000026B VOL: 0
 ;PCODE: $0000026C VOL: 0
 ;PCODE: $0000026D VOL: 0
 ;PCODE: $0000026E VOL: 0
+; 0000 01B4     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,1,&c,1))
 ;PCODE: $0000026F VOL: 0
 ;PCODE: $00000270 VOL: 0
-; 0000 01B1     {
-; 0000 01B2         printf("error control\n\r");
 ;PCODE: $00000271 VOL: 0
 ;PCODE: $00000272 VOL: 0
 ;PCODE: $00000273 VOL: 0
@@ -1108,199 +1110,171 @@
 ;PCODE: $00000275 VOL: 0
 ;PCODE: $00000276 VOL: 0
 ;PCODE: $00000277 VOL: 0
-; 0000 01B3     }
-; 0000 01B4 }
 ;PCODE: $00000278 VOL: 0
 ;PCODE: $00000279 VOL: 0
 ;PCODE: $0000027A VOL: 0
+; 0000 01B5     {
+; 0000 01B6         printf("error control\n\r");
 ;PCODE: $0000027B VOL: 0
 ;PCODE: $0000027C VOL: 0
 ;PCODE: $0000027D VOL: 0
-;
-;void SampleRateCheck(unsigned char mode)
-; 0000 01B7 {
 ;PCODE: $0000027E VOL: 0
 ;PCODE: $0000027F VOL: 0
-; 0000 01B8     if(DSD)
 ;PCODE: $00000280 VOL: 0
-;	mode -> Y+0
 ;PCODE: $00000281 VOL: 0
+; 0000 01B7     }
+; 0000 01B8 }
 ;PCODE: $00000282 VOL: 0
 ;PCODE: $00000283 VOL: 0
-; 0000 01B9     {
-; 0000 01BA         printf("DSD\n\r");
 ;PCODE: $00000284 VOL: 0
 ;PCODE: $00000285 VOL: 0
 ;PCODE: $00000286 VOL: 0
 ;PCODE: $00000287 VOL: 0
+;
+;void SampleRateCheck(unsigned char mode)
+; 0000 01BB {
 ;PCODE: $00000288 VOL: 0
 ;PCODE: $00000289 VOL: 0
+; 0000 01BC     if(DSD)
 ;PCODE: $0000028A VOL: 0
-; 0000 01BB         dac_reg[2]=_setbit(dac_reg[2],7);
+;	mode -> Y+0
 ;PCODE: $0000028B VOL: 0
 ;PCODE: $0000028C VOL: 0
 ;PCODE: $0000028D VOL: 0
+; 0000 01BD     {
+; 0000 01BE         printf("DSD\n\r");
 ;PCODE: $0000028E VOL: 0
 ;PCODE: $0000028F VOL: 0
 ;PCODE: $00000290 VOL: 0
 ;PCODE: $00000291 VOL: 0
-; 0000 01BC     }
-; 0000 01BD     else
 ;PCODE: $00000292 VOL: 0
 ;PCODE: $00000293 VOL: 0
-; 0000 01BE     {
-; 0000 01BF         printf("PCM\n\r");
 ;PCODE: $00000294 VOL: 0
+; 0000 01BF         dac_reg[2]=_setbit(dac_reg[2],7);
 ;PCODE: $00000295 VOL: 0
 ;PCODE: $00000296 VOL: 0
 ;PCODE: $00000297 VOL: 0
 ;PCODE: $00000298 VOL: 0
 ;PCODE: $00000299 VOL: 0
 ;PCODE: $0000029A VOL: 0
-; 0000 01C0         dac_reg[2]=_clrbit(dac_reg[2],7);
 ;PCODE: $0000029B VOL: 0
+; 0000 01C0     }
+; 0000 01C1     else
 ;PCODE: $0000029C VOL: 0
 ;PCODE: $0000029D VOL: 0
+; 0000 01C2     {
+; 0000 01C3         printf("PCM\n\r");
 ;PCODE: $0000029E VOL: 0
 ;PCODE: $0000029F VOL: 0
 ;PCODE: $000002A0 VOL: 0
 ;PCODE: $000002A1 VOL: 0
-; 0000 01C1 
-; 0000 01C2     };
 ;PCODE: $000002A2 VOL: 0
-; 0000 01C3     switch(mode)
 ;PCODE: $000002A3 VOL: 0
 ;PCODE: $000002A4 VOL: 0
-; 0000 01C4         {
-; 0000 01C5             case 0:
+; 0000 01C4         dac_reg[2]=_clrbit(dac_reg[2],7);
 ;PCODE: $000002A5 VOL: 0
 ;PCODE: $000002A6 VOL: 0
-; 0000 01C6             {
-; 0000 01C7                 //DSD64 Mode
-; 0000 01C8                 // DSDSEL0
-; 0000 01C9 
-; 0000 01CA                 dac_reg[6]=_clrbit(dac_reg[6],0);
 ;PCODE: $000002A7 VOL: 0
 ;PCODE: $000002A8 VOL: 0
 ;PCODE: $000002A9 VOL: 0
 ;PCODE: $000002AA VOL: 0
 ;PCODE: $000002AB VOL: 0
+; 0000 01C5 
+; 0000 01C6     };
 ;PCODE: $000002AC VOL: 0
+; 0000 01C7     switch(mode)
 ;PCODE: $000002AD VOL: 0
-; 0000 01CB                 dac_reg[9]=_clrbit(dac_reg[9],0);
 ;PCODE: $000002AE VOL: 0
+; 0000 01C8         {
+; 0000 01C9             case 0:
 ;PCODE: $000002AF VOL: 0
 ;PCODE: $000002B0 VOL: 0
+; 0000 01CA             {
+; 0000 01CB                 //DSD64 Mode
+; 0000 01CC                 // DSDSEL0
+; 0000 01CD 
+; 0000 01CE                 dac_reg[6]=_clrbit(dac_reg[6],0);
 ;PCODE: $000002B1 VOL: 0
 ;PCODE: $000002B2 VOL: 0
 ;PCODE: $000002B3 VOL: 0
 ;PCODE: $000002B4 VOL: 0
-; 0000 01CC                 //dac_reg[1]=_clrbit(dac_reg[1],3);
-; 0000 01CD                 //dac_reg[1]=_clrbit(dac_reg[1],4);
-; 0000 01CE                 //dac_reg[5]=_clrbit(dac_reg[5],1);
-; 0000 01CF 
-; 0000 01D0             }
-; 0000 01D1             break;
 ;PCODE: $000002B5 VOL: 0
-; 0000 01D2             case 1:
 ;PCODE: $000002B6 VOL: 0
 ;PCODE: $000002B7 VOL: 0
+; 0000 01CF                 dac_reg[9]=_clrbit(dac_reg[9],0);
 ;PCODE: $000002B8 VOL: 0
-; 0000 01D3             {
-; 0000 01D4                 dac_reg[6]=_setbit(dac_reg[6],0);
 ;PCODE: $000002B9 VOL: 0
 ;PCODE: $000002BA VOL: 0
 ;PCODE: $000002BB VOL: 0
 ;PCODE: $000002BC VOL: 0
 ;PCODE: $000002BD VOL: 0
 ;PCODE: $000002BE VOL: 0
+; 0000 01D0                 dac_reg[1]=_clrbit(dac_reg[1],3);
 ;PCODE: $000002BF VOL: 0
-; 0000 01D5                 dac_reg[9]=_clrbit(dac_reg[9],0);
 ;PCODE: $000002C0 VOL: 0
 ;PCODE: $000002C1 VOL: 0
 ;PCODE: $000002C2 VOL: 0
 ;PCODE: $000002C3 VOL: 0
 ;PCODE: $000002C4 VOL: 0
 ;PCODE: $000002C5 VOL: 0
+; 0000 01D1                 dac_reg[1]=_clrbit(dac_reg[1],4);
 ;PCODE: $000002C6 VOL: 0
-; 0000 01D6                 //dac_reg[1]=_setbit(dac_reg[1],3);
-; 0000 01D7                 //dac_reg[1]=_clrbit(dac_reg[1],4);
-; 0000 01D8                 //dac_reg[5]=_clrbit(dac_reg[5],1);
-; 0000 01D9             }
-; 0000 01DA             break;
 ;PCODE: $000002C7 VOL: 0
-; 0000 01DB             case 2:
 ;PCODE: $000002C8 VOL: 0
 ;PCODE: $000002C9 VOL: 0
 ;PCODE: $000002CA VOL: 0
-; 0000 01DC             {
-; 0000 01DD                 dac_reg[6]=_clrbit(dac_reg[6],0);
 ;PCODE: $000002CB VOL: 0
 ;PCODE: $000002CC VOL: 0
+; 0000 01D2                 dac_reg[5]=_clrbit(dac_reg[5],1);
 ;PCODE: $000002CD VOL: 0
 ;PCODE: $000002CE VOL: 0
 ;PCODE: $000002CF VOL: 0
 ;PCODE: $000002D0 VOL: 0
 ;PCODE: $000002D1 VOL: 0
-; 0000 01DE                 dac_reg[9]=_setbit(dac_reg[9],0);
 ;PCODE: $000002D2 VOL: 0
 ;PCODE: $000002D3 VOL: 0
+; 0000 01D3 
+; 0000 01D4             }
+; 0000 01D5             break;
 ;PCODE: $000002D4 VOL: 0
+; 0000 01D6             case 1:
 ;PCODE: $000002D5 VOL: 0
 ;PCODE: $000002D6 VOL: 0
 ;PCODE: $000002D7 VOL: 0
+; 0000 01D7             {
+; 0000 01D8                 dac_reg[6]=_setbit(dac_reg[6],0);
 ;PCODE: $000002D8 VOL: 0
-; 0000 01DF                 //dac_reg[1]=_clrbit(dac_reg[1],3);
-; 0000 01E0                 //dac_reg[1]=_setbit(dac_reg[1],4);
-; 0000 01E1                 //dac_reg[5]=_clrbit(dac_reg[5],1);
-; 0000 01E2 
-; 0000 01E3             }
-; 0000 01E4             break;
 ;PCODE: $000002D9 VOL: 0
-; 0000 01E5             case 3:
 ;PCODE: $000002DA VOL: 0
 ;PCODE: $000002DB VOL: 0
 ;PCODE: $000002DC VOL: 0
-; 0000 01E6             {
-; 0000 01E7                 dac_reg[6]=_setbit(dac_reg[6],0);
 ;PCODE: $000002DD VOL: 0
 ;PCODE: $000002DE VOL: 0
+; 0000 01D9                 dac_reg[9]=_clrbit(dac_reg[9],0);
 ;PCODE: $000002DF VOL: 0
 ;PCODE: $000002E0 VOL: 0
 ;PCODE: $000002E1 VOL: 0
 ;PCODE: $000002E2 VOL: 0
 ;PCODE: $000002E3 VOL: 0
-; 0000 01E8                 dac_reg[9]=_setbit(dac_reg[9],0);
 ;PCODE: $000002E4 VOL: 0
 ;PCODE: $000002E5 VOL: 0
+; 0000 01DA                 dac_reg[1]=_setbit(dac_reg[1],3);
 ;PCODE: $000002E6 VOL: 0
 ;PCODE: $000002E7 VOL: 0
 ;PCODE: $000002E8 VOL: 0
 ;PCODE: $000002E9 VOL: 0
 ;PCODE: $000002EA VOL: 0
-; 0000 01E9                 //dac_reg[1]=_clrbit(dac_reg[1],3);
-; 0000 01EA                 //dac_reg[1]=_clrbit(dac_reg[1],4);
-; 0000 01EB                 //dac_reg[5]=_setbit(dac_reg[5],1);
-; 0000 01EC             }
-; 0000 01ED             break;
 ;PCODE: $000002EB VOL: 0
-; 0000 01EE 
-; 0000 01EF         };
 ;PCODE: $000002EC VOL: 0
-; 0000 01F0         if(F0)
+; 0000 01DB                 dac_reg[1]=_clrbit(dac_reg[1],4);
 ;PCODE: $000002ED VOL: 0
 ;PCODE: $000002EE VOL: 0
 ;PCODE: $000002EF VOL: 0
-; 0000 01F1         {
-; 0000 01F2             // 44.1 kHz MCLK mode
-; 0000 01F3 
-; 0000 01F4             Scale_44=1;
 ;PCODE: $000002F0 VOL: 0
 ;PCODE: $000002F1 VOL: 0
-; 0000 01F5             Scale_48=0;
 ;PCODE: $000002F2 VOL: 0
 ;PCODE: $000002F3 VOL: 0
-; 0000 01F6             printf("44.1 kHz\n\r");
+; 0000 01DC                 dac_reg[5]=_clrbit(dac_reg[5],1);
 ;PCODE: $000002F4 VOL: 0
 ;PCODE: $000002F5 VOL: 0
 ;PCODE: $000002F6 VOL: 0
@@ -1308,37 +1282,31 @@
 ;PCODE: $000002F8 VOL: 0
 ;PCODE: $000002F9 VOL: 0
 ;PCODE: $000002FA VOL: 0
-; 0000 01F7 
-; 0000 01F8         }
-; 0000 01F9         else
+; 0000 01DD             }
+; 0000 01DE             break;
 ;PCODE: $000002FB VOL: 0
+; 0000 01DF             case 2:
 ;PCODE: $000002FC VOL: 0
-; 0000 01FA         {
-; 0000 01FB             // 48 kHz MCLK Mode
-; 0000 01FC             Scale_44=0;
 ;PCODE: $000002FD VOL: 0
 ;PCODE: $000002FE VOL: 0
-; 0000 01FD             Scale_48=1;
+; 0000 01E0             {
+; 0000 01E1                 dac_reg[6]=_clrbit(dac_reg[6],0);
 ;PCODE: $000002FF VOL: 0
 ;PCODE: $00000300 VOL: 0
-; 0000 01FE             printf("48 kHz\n\r");
 ;PCODE: $00000301 VOL: 0
 ;PCODE: $00000302 VOL: 0
 ;PCODE: $00000303 VOL: 0
 ;PCODE: $00000304 VOL: 0
 ;PCODE: $00000305 VOL: 0
+; 0000 01E2                 dac_reg[9]=_setbit(dac_reg[9],0);
 ;PCODE: $00000306 VOL: 0
 ;PCODE: $00000307 VOL: 0
-; 0000 01FF 
-; 0000 0200         };
 ;PCODE: $00000308 VOL: 0
-; 0000 0201 
-; 0000 0202 
-; 0000 0203     printf("6=%X,9=%X\r\n",dac_reg[6],dac_reg[9]);
 ;PCODE: $00000309 VOL: 0
 ;PCODE: $0000030A VOL: 0
 ;PCODE: $0000030B VOL: 0
 ;PCODE: $0000030C VOL: 0
+; 0000 01E3                 dac_reg[1]=_clrbit(dac_reg[1],3);
 ;PCODE: $0000030D VOL: 0
 ;PCODE: $0000030E VOL: 0
 ;PCODE: $0000030F VOL: 0
@@ -1346,246 +1314,362 @@
 ;PCODE: $00000311 VOL: 0
 ;PCODE: $00000312 VOL: 0
 ;PCODE: $00000313 VOL: 0
+; 0000 01E4                 dac_reg[1]=_setbit(dac_reg[1],4);
 ;PCODE: $00000314 VOL: 0
 ;PCODE: $00000315 VOL: 0
 ;PCODE: $00000316 VOL: 0
 ;PCODE: $00000317 VOL: 0
-; 0000 0204     Write_To_DAC(i2c_address,1,dac_reg[1]);
 ;PCODE: $00000318 VOL: 0
 ;PCODE: $00000319 VOL: 0
 ;PCODE: $0000031A VOL: 0
+; 0000 01E5                 dac_reg[5]=_clrbit(dac_reg[5],1);
 ;PCODE: $0000031B VOL: 0
 ;PCODE: $0000031C VOL: 0
 ;PCODE: $0000031D VOL: 0
-; 0000 0205     Write_To_DAC(i2c_address,2,dac_reg[2]);
 ;PCODE: $0000031E VOL: 0
 ;PCODE: $0000031F VOL: 0
 ;PCODE: $00000320 VOL: 0
 ;PCODE: $00000321 VOL: 0
+; 0000 01E6 
+; 0000 01E7             }
+; 0000 01E8             break;
 ;PCODE: $00000322 VOL: 0
+; 0000 01E9             case 3:
 ;PCODE: $00000323 VOL: 0
-; 0000 0206     Write_To_DAC(i2c_address,5,dac_reg[5]);
 ;PCODE: $00000324 VOL: 0
 ;PCODE: $00000325 VOL: 0
+; 0000 01EA             {
+; 0000 01EB                 dac_reg[6]=_setbit(dac_reg[6],0);
 ;PCODE: $00000326 VOL: 0
 ;PCODE: $00000327 VOL: 0
 ;PCODE: $00000328 VOL: 0
 ;PCODE: $00000329 VOL: 0
-; 0000 0207     Write_To_DAC(i2c_address,6,dac_reg[6]);
 ;PCODE: $0000032A VOL: 0
 ;PCODE: $0000032B VOL: 0
 ;PCODE: $0000032C VOL: 0
+; 0000 01EC                 dac_reg[9]=_setbit(dac_reg[9],0);
 ;PCODE: $0000032D VOL: 0
 ;PCODE: $0000032E VOL: 0
 ;PCODE: $0000032F VOL: 0
-; 0000 0208     Write_To_DAC(i2c_address,9,dac_reg[9]);
 ;PCODE: $00000330 VOL: 0
 ;PCODE: $00000331 VOL: 0
 ;PCODE: $00000332 VOL: 0
 ;PCODE: $00000333 VOL: 0
+; 0000 01ED                 dac_reg[1]=_clrbit(dac_reg[1],3);
 ;PCODE: $00000334 VOL: 0
 ;PCODE: $00000335 VOL: 0
-; 0000 0209     ResetChip();
 ;PCODE: $00000336 VOL: 0
-; 0000 020A }
 ;PCODE: $00000337 VOL: 0
 ;PCODE: $00000338 VOL: 0
 ;PCODE: $00000339 VOL: 0
-;
-;void ResetChip()
-; 0000 020D {
 ;PCODE: $0000033A VOL: 0
+; 0000 01EE                 dac_reg[1]=_clrbit(dac_reg[1],4);
 ;PCODE: $0000033B VOL: 0
-; 0000 020E     //printf("Reset\n\r");
-; 0000 020F     Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
 ;PCODE: $0000033C VOL: 0
 ;PCODE: $0000033D VOL: 0
 ;PCODE: $0000033E VOL: 0
 ;PCODE: $0000033F VOL: 0
 ;PCODE: $00000340 VOL: 0
 ;PCODE: $00000341 VOL: 0
+; 0000 01EF                 dac_reg[5]=_setbit(dac_reg[5],1);
 ;PCODE: $00000342 VOL: 0
-; 0000 0210     delay_ms(50);
 ;PCODE: $00000343 VOL: 0
 ;PCODE: $00000344 VOL: 0
 ;PCODE: $00000345 VOL: 0
-; 0000 0211     Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
 ;PCODE: $00000346 VOL: 0
 ;PCODE: $00000347 VOL: 0
 ;PCODE: $00000348 VOL: 0
+; 0000 01F0             }
+; 0000 01F1             break;
 ;PCODE: $00000349 VOL: 0
+; 0000 01F2 
+; 0000 01F3         };
 ;PCODE: $0000034A VOL: 0
+; 0000 01F4         if(F0)
 ;PCODE: $0000034B VOL: 0
 ;PCODE: $0000034C VOL: 0
-; 0000 0212     delay_ms(50);
 ;PCODE: $0000034D VOL: 0
+; 0000 01F5         {
+; 0000 01F6             // 44.1 kHz MCLK mode
+; 0000 01F7             Scale_44=1;
 ;PCODE: $0000034E VOL: 0
 ;PCODE: $0000034F VOL: 0
-; 0000 0213 }
+; 0000 01F8             Scale_48=0;
 ;PCODE: $00000350 VOL: 0
 ;PCODE: $00000351 VOL: 0
-;
-;void DF_Check()
-; 0000 0216 {
+; 0000 01F9             printf("44.1 kHz\n\r");
 ;PCODE: $00000352 VOL: 0
 ;PCODE: $00000353 VOL: 0
-; 0000 0217     if(SSLOW)
 ;PCODE: $00000354 VOL: 0
 ;PCODE: $00000355 VOL: 0
 ;PCODE: $00000356 VOL: 0
-; 0000 0218     {
-; 0000 0219         dac_reg[5]=_setbit(dac_reg[5],0);
 ;PCODE: $00000357 VOL: 0
 ;PCODE: $00000358 VOL: 0
+; 0000 01FA         }
+; 0000 01FB         else
 ;PCODE: $00000359 VOL: 0
 ;PCODE: $0000035A VOL: 0
+; 0000 01FC         {
+; 0000 01FD             // 48 kHz MCLK Mode
+; 0000 01FE             Scale_44=0;
 ;PCODE: $0000035B VOL: 0
 ;PCODE: $0000035C VOL: 0
+; 0000 01FF             Scale_48=1;
 ;PCODE: $0000035D VOL: 0
-; 0000 021A     }
-; 0000 021B     else
 ;PCODE: $0000035E VOL: 0
+; 0000 0200             printf("48 kHz\n\r");
 ;PCODE: $0000035F VOL: 0
-; 0000 021C     {
-; 0000 021D         dac_reg[5]=_clrbit(dac_reg[5],0);
 ;PCODE: $00000360 VOL: 0
 ;PCODE: $00000361 VOL: 0
 ;PCODE: $00000362 VOL: 0
 ;PCODE: $00000363 VOL: 0
 ;PCODE: $00000364 VOL: 0
 ;PCODE: $00000365 VOL: 0
+; 0000 0201         };
 ;PCODE: $00000366 VOL: 0
-; 0000 021E     }
+; 0000 0202 
+; 0000 0203     Write_To_DAC(i2c_address,1,dac_reg[1]);
 ;PCODE: $00000367 VOL: 0
-; 0000 021F 
-; 0000 0220     if(SD)
 ;PCODE: $00000368 VOL: 0
 ;PCODE: $00000369 VOL: 0
 ;PCODE: $0000036A VOL: 0
-; 0000 0221     {
-; 0000 0222         dac_reg[1]=_setbit(dac_reg[1],5);
 ;PCODE: $0000036B VOL: 0
 ;PCODE: $0000036C VOL: 0
+; 0000 0204     Write_To_DAC(i2c_address,2,dac_reg[2]);
 ;PCODE: $0000036D VOL: 0
 ;PCODE: $0000036E VOL: 0
 ;PCODE: $0000036F VOL: 0
 ;PCODE: $00000370 VOL: 0
 ;PCODE: $00000371 VOL: 0
-; 0000 0223     }
-; 0000 0224     else
 ;PCODE: $00000372 VOL: 0
+; 0000 0205     Write_To_DAC(i2c_address,5,dac_reg[5]);
 ;PCODE: $00000373 VOL: 0
-; 0000 0225     {
-; 0000 0226         dac_reg[1]=_clrbit(dac_reg[1],5);
 ;PCODE: $00000374 VOL: 0
 ;PCODE: $00000375 VOL: 0
 ;PCODE: $00000376 VOL: 0
 ;PCODE: $00000377 VOL: 0
 ;PCODE: $00000378 VOL: 0
+; 0000 0206     Write_To_DAC(i2c_address,6,dac_reg[6]);
 ;PCODE: $00000379 VOL: 0
 ;PCODE: $0000037A VOL: 0
-; 0000 0227     }
 ;PCODE: $0000037B VOL: 0
-; 0000 0228     if(SLOW)
 ;PCODE: $0000037C VOL: 0
 ;PCODE: $0000037D VOL: 0
 ;PCODE: $0000037E VOL: 0
-; 0000 0229     {
-; 0000 022A         dac_reg[2]=_setbit(dac_reg[2],0);
+; 0000 0207     Write_To_DAC(i2c_address,9,dac_reg[9]);
 ;PCODE: $0000037F VOL: 0
 ;PCODE: $00000380 VOL: 0
 ;PCODE: $00000381 VOL: 0
 ;PCODE: $00000382 VOL: 0
 ;PCODE: $00000383 VOL: 0
 ;PCODE: $00000384 VOL: 0
+; 0000 0208     ResetChip(1);
 ;PCODE: $00000385 VOL: 0
-; 0000 022B     }
-; 0000 022C     else
 ;PCODE: $00000386 VOL: 0
+; 0000 0209 }
 ;PCODE: $00000387 VOL: 0
-; 0000 022D     {
-; 0000 022E         dac_reg[2]=_clrbit(dac_reg[2],0);
 ;PCODE: $00000388 VOL: 0
 ;PCODE: $00000389 VOL: 0
+;
+;void ResetChip(unsigned char mode)
+; 0000 020C {
 ;PCODE: $0000038A VOL: 0
 ;PCODE: $0000038B VOL: 0
+; 0000 020D     //printf("Reset\n\r");
+; 0000 020E     if(!mode)
 ;PCODE: $0000038C VOL: 0
+;	mode -> Y+0
 ;PCODE: $0000038D VOL: 0
 ;PCODE: $0000038E VOL: 0
-; 0000 022F     }
 ;PCODE: $0000038F VOL: 0
-; 0000 0230     Write_To_DAC(i2c_address,1,dac_reg[1]);
+; 0000 020F     {
+; 0000 0210         Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
 ;PCODE: $00000390 VOL: 0
 ;PCODE: $00000391 VOL: 0
 ;PCODE: $00000392 VOL: 0
 ;PCODE: $00000393 VOL: 0
 ;PCODE: $00000394 VOL: 0
 ;PCODE: $00000395 VOL: 0
-; 0000 0231     Write_To_DAC(i2c_address,2,dac_reg[2]);
 ;PCODE: $00000396 VOL: 0
+; 0000 0211     }
+; 0000 0212     else
 ;PCODE: $00000397 VOL: 0
 ;PCODE: $00000398 VOL: 0
+; 0000 0213     {
+; 0000 0214         Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
 ;PCODE: $00000399 VOL: 0
 ;PCODE: $0000039A VOL: 0
 ;PCODE: $0000039B VOL: 0
-; 0000 0232     Write_To_DAC(i2c_address,5,dac_reg[5]);
 ;PCODE: $0000039C VOL: 0
 ;PCODE: $0000039D VOL: 0
 ;PCODE: $0000039E VOL: 0
 ;PCODE: $0000039F VOL: 0
+; 0000 0215     }
 ;PCODE: $000003A0 VOL: 0
+; 0000 0216 }
 ;PCODE: $000003A1 VOL: 0
-; 0000 0233 
-; 0000 0234     ResetChip();
 ;PCODE: $000003A2 VOL: 0
-; 0000 0235 }
 ;PCODE: $000003A3 VOL: 0
-;PCODE: $000003A4 VOL: 0
 ;
-;void SW_Mute(unsigned char mute)
-; 0000 0238 {
+;void DF_Check()
+; 0000 0219 {
+;PCODE: $000003A4 VOL: 0
 ;PCODE: $000003A5 VOL: 0
+; 0000 021A     if(SSLOW)
 ;PCODE: $000003A6 VOL: 0
-; 0000 0239     if(mute)
 ;PCODE: $000003A7 VOL: 0
-;	mute -> Y+0
 ;PCODE: $000003A8 VOL: 0
+; 0000 021B     {
+; 0000 021C         dac_reg[5]=_setbit(dac_reg[5],0);
 ;PCODE: $000003A9 VOL: 0
 ;PCODE: $000003AA VOL: 0
-; 0000 023A     {
-; 0000 023B         dac_reg[1]=_setbit(dac_reg[1],0);
 ;PCODE: $000003AB VOL: 0
 ;PCODE: $000003AC VOL: 0
 ;PCODE: $000003AD VOL: 0
 ;PCODE: $000003AE VOL: 0
 ;PCODE: $000003AF VOL: 0
+; 0000 021D     }
+; 0000 021E     else
 ;PCODE: $000003B0 VOL: 0
 ;PCODE: $000003B1 VOL: 0
-; 0000 023C         //printf("Mute\n\r");
-; 0000 023D     }
-; 0000 023E     else
+; 0000 021F     {
+; 0000 0220         dac_reg[5]=_clrbit(dac_reg[5],0);
 ;PCODE: $000003B2 VOL: 0
 ;PCODE: $000003B3 VOL: 0
-; 0000 023F     {
-; 0000 0240         dac_reg[1]=_clrbit(dac_reg[1],0);
 ;PCODE: $000003B4 VOL: 0
 ;PCODE: $000003B5 VOL: 0
 ;PCODE: $000003B6 VOL: 0
 ;PCODE: $000003B7 VOL: 0
 ;PCODE: $000003B8 VOL: 0
+; 0000 0221     }
 ;PCODE: $000003B9 VOL: 0
+; 0000 0222 
+; 0000 0223     if(SD)
 ;PCODE: $000003BA VOL: 0
-; 0000 0241         //printf("UnMute\r\n");
-; 0000 0242     };
 ;PCODE: $000003BB VOL: 0
-; 0000 0243     Write_To_DAC(i2c_address,1,dac_reg[1]);
 ;PCODE: $000003BC VOL: 0
+; 0000 0224     {
+; 0000 0225         dac_reg[1]=_setbit(dac_reg[1],5);
 ;PCODE: $000003BD VOL: 0
 ;PCODE: $000003BE VOL: 0
 ;PCODE: $000003BF VOL: 0
 ;PCODE: $000003C0 VOL: 0
 ;PCODE: $000003C1 VOL: 0
-; 0000 0244 }
 ;PCODE: $000003C2 VOL: 0
 ;PCODE: $000003C3 VOL: 0
+; 0000 0226     }
+; 0000 0227     else
 ;PCODE: $000003C4 VOL: 0
+;PCODE: $000003C5 VOL: 0
+; 0000 0228     {
+; 0000 0229         dac_reg[1]=_clrbit(dac_reg[1],5);
+;PCODE: $000003C6 VOL: 0
+;PCODE: $000003C7 VOL: 0
+;PCODE: $000003C8 VOL: 0
+;PCODE: $000003C9 VOL: 0
+;PCODE: $000003CA VOL: 0
+;PCODE: $000003CB VOL: 0
+;PCODE: $000003CC VOL: 0
+; 0000 022A     }
+;PCODE: $000003CD VOL: 0
+; 0000 022B     if(SLOW)
+;PCODE: $000003CE VOL: 0
+;PCODE: $000003CF VOL: 0
+;PCODE: $000003D0 VOL: 0
+; 0000 022C     {
+; 0000 022D         dac_reg[2]=_setbit(dac_reg[2],0);
+;PCODE: $000003D1 VOL: 0
+;PCODE: $000003D2 VOL: 0
+;PCODE: $000003D3 VOL: 0
+;PCODE: $000003D4 VOL: 0
+;PCODE: $000003D5 VOL: 0
+;PCODE: $000003D6 VOL: 0
+;PCODE: $000003D7 VOL: 0
+; 0000 022E     }
+; 0000 022F     else
+;PCODE: $000003D8 VOL: 0
+;PCODE: $000003D9 VOL: 0
+; 0000 0230     {
+; 0000 0231         dac_reg[2]=_clrbit(dac_reg[2],0);
+;PCODE: $000003DA VOL: 0
+;PCODE: $000003DB VOL: 0
+;PCODE: $000003DC VOL: 0
+;PCODE: $000003DD VOL: 0
+;PCODE: $000003DE VOL: 0
+;PCODE: $000003DF VOL: 0
+;PCODE: $000003E0 VOL: 0
+; 0000 0232     }
+;PCODE: $000003E1 VOL: 0
+; 0000 0233     Write_To_DAC(i2c_address,1,dac_reg[1]);
+;PCODE: $000003E2 VOL: 0
+;PCODE: $000003E3 VOL: 0
+;PCODE: $000003E4 VOL: 0
+;PCODE: $000003E5 VOL: 0
+;PCODE: $000003E6 VOL: 0
+;PCODE: $000003E7 VOL: 0
+; 0000 0234     Write_To_DAC(i2c_address,2,dac_reg[2]);
+;PCODE: $000003E8 VOL: 0
+;PCODE: $000003E9 VOL: 0
+;PCODE: $000003EA VOL: 0
+;PCODE: $000003EB VOL: 0
+;PCODE: $000003EC VOL: 0
+;PCODE: $000003ED VOL: 0
+; 0000 0235     Write_To_DAC(i2c_address,5,dac_reg[5]);
+;PCODE: $000003EE VOL: 0
+;PCODE: $000003EF VOL: 0
+;PCODE: $000003F0 VOL: 0
+;PCODE: $000003F1 VOL: 0
+;PCODE: $000003F2 VOL: 0
+;PCODE: $000003F3 VOL: 0
+; 0000 0236 
+; 0000 0237 }
+;PCODE: $000003F4 VOL: 0
+;PCODE: $000003F5 VOL: 0
+;
+;void SW_Mute(unsigned char mute)
+; 0000 023A {
+;PCODE: $000003F6 VOL: 0
+;PCODE: $000003F7 VOL: 0
+; 0000 023B     if(mute)
+;PCODE: $000003F8 VOL: 0
+;	mute -> Y+0
+;PCODE: $000003F9 VOL: 0
+;PCODE: $000003FA VOL: 0
+;PCODE: $000003FB VOL: 0
+; 0000 023C     {
+; 0000 023D         dac_reg[1]=_setbit(dac_reg[1],0);
+;PCODE: $000003FC VOL: 0
+;PCODE: $000003FD VOL: 0
+;PCODE: $000003FE VOL: 0
+;PCODE: $000003FF VOL: 0
+;PCODE: $00000400 VOL: 0
+;PCODE: $00000401 VOL: 0
+;PCODE: $00000402 VOL: 0
+; 0000 023E         //printf("Mute\n\r");
+; 0000 023F     }
+; 0000 0240     else
+;PCODE: $00000403 VOL: 0
+;PCODE: $00000404 VOL: 0
+; 0000 0241     {
+; 0000 0242         dac_reg[1]=_clrbit(dac_reg[1],0);
+;PCODE: $00000405 VOL: 0
+;PCODE: $00000406 VOL: 0
+;PCODE: $00000407 VOL: 0
+;PCODE: $00000408 VOL: 0
+;PCODE: $00000409 VOL: 0
+;PCODE: $0000040A VOL: 0
+;PCODE: $0000040B VOL: 0
+; 0000 0243         //printf("UnMute\r\n");
+; 0000 0244     };
+;PCODE: $0000040C VOL: 0
+; 0000 0245     Write_To_DAC(i2c_address,1,dac_reg[1]);
+;PCODE: $0000040D VOL: 0
+;PCODE: $0000040E VOL: 0
+;PCODE: $0000040F VOL: 0
+;PCODE: $00000410 VOL: 0
+;PCODE: $00000411 VOL: 0
+;PCODE: $00000412 VOL: 0
+; 0000 0246 }
+;PCODE: $00000413 VOL: 0
+;PCODE: $00000414 VOL: 0
+;PCODE: $00000415 VOL: 0

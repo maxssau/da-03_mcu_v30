@@ -1,7 +1,7 @@
 
 void Write_To_DAC (unsigned char,unsigned char,unsigned char);
 void SampleRateCheck(unsigned char);
-void ResetChip();
+void ResetChip(unsigned char);
 void DF_Check();
 char getchar(void);
 void putchar(char);
@@ -331,6 +331,7 @@ while (1)
             DAC_reset=0;
             delay_ms(100);
             DAC_reset=1;
+            ResetChip(0);
             delay_ms(100);
             SW_Mute(1);    
             if(_4493)
@@ -358,7 +359,7 @@ while (1)
                 
             delay_ms(50);
             StartUp=1;
-            ResetChip();
+            ResetChip(1);
             SW_Mute(0);
         }
         else
@@ -377,6 +378,7 @@ while (1)
             // Samplerate check
             if((_SR+F0)!=last_SR)
             {
+                ResetChip(0);
                 SW_Mute(1);
                 SampleRateCheck(_SR);
                 last_SR=_SR+F0;
@@ -398,16 +400,18 @@ while (1)
                     SW_Mute(0);
                 }
                 printf("Current mode: %i\n\r", _SR);
+                ResetChip(1);
             };
             
             
             if(_DF!=last_DF)
-            {
+            {   
+                ResetChip(0);
                 SW_Mute(1);
-                DF_Check();
-                ResetChip();
+                DF_Check();                
                 last_DF=_DF;
                 printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n\r",SLOW,SD,SSLOW);
+                ResetChip(1);
                 SW_Mute(0);
             }
         }
@@ -457,9 +461,9 @@ void SampleRateCheck(unsigned char mode)
                 
                 dac_reg[6]=_clrbit(dac_reg[6],0);
                 dac_reg[9]=_clrbit(dac_reg[9],0);                
-                //dac_reg[1]=_clrbit(dac_reg[1],3);
-                //dac_reg[1]=_clrbit(dac_reg[1],4);
-                //dac_reg[5]=_clrbit(dac_reg[5],1);
+                dac_reg[1]=_clrbit(dac_reg[1],3);
+                dac_reg[1]=_clrbit(dac_reg[1],4);
+                dac_reg[5]=_clrbit(dac_reg[5],1);
                   
             }
             break;
@@ -467,18 +471,18 @@ void SampleRateCheck(unsigned char mode)
             {
                 dac_reg[6]=_setbit(dac_reg[6],0);
                 dac_reg[9]=_clrbit(dac_reg[9],0);
-                //dac_reg[1]=_setbit(dac_reg[1],3);
-                //dac_reg[1]=_clrbit(dac_reg[1],4);
-                //dac_reg[5]=_clrbit(dac_reg[5],1);       
+                dac_reg[1]=_setbit(dac_reg[1],3);
+                dac_reg[1]=_clrbit(dac_reg[1],4);
+                dac_reg[5]=_clrbit(dac_reg[5],1);       
             }
             break;
             case 2:
             {
                 dac_reg[6]=_clrbit(dac_reg[6],0);
                 dac_reg[9]=_setbit(dac_reg[9],0);        
-                //dac_reg[1]=_clrbit(dac_reg[1],3);
-                //dac_reg[1]=_setbit(dac_reg[1],4);
-                //dac_reg[5]=_clrbit(dac_reg[5],1);
+                dac_reg[1]=_clrbit(dac_reg[1],3);
+                dac_reg[1]=_setbit(dac_reg[1],4);
+                dac_reg[5]=_clrbit(dac_reg[5],1);
                 
             }
             break;
@@ -486,48 +490,47 @@ void SampleRateCheck(unsigned char mode)
             {
                 dac_reg[6]=_setbit(dac_reg[6],0);
                 dac_reg[9]=_setbit(dac_reg[9],0);
-                //dac_reg[1]=_clrbit(dac_reg[1],3);
-                //dac_reg[1]=_clrbit(dac_reg[1],4);
-                //dac_reg[5]=_setbit(dac_reg[5],1);
+                dac_reg[1]=_clrbit(dac_reg[1],3);
+                dac_reg[1]=_clrbit(dac_reg[1],4);
+                dac_reg[5]=_setbit(dac_reg[5],1);
             }
             break;
             
         };
         if(F0)
         {
-            // 44.1 kHz MCLK mode
-            
+            // 44.1 kHz MCLK mode    
             Scale_44=1;
             Scale_48=0;
-            printf("44.1 kHz\n\r");
-                   
+            printf("44.1 kHz\n\r");                  
         }
         else
-        {
+        {               
             // 48 kHz MCLK Mode
             Scale_44=0;
             Scale_48=1;
             printf("48 kHz\n\r");
-            
         };
-    
-    
-    printf("6=%X,9=%X\r\n",dac_reg[6],dac_reg[9]);    
+ 
     Write_To_DAC(i2c_address,1,dac_reg[1]);
     Write_To_DAC(i2c_address,2,dac_reg[2]);
     Write_To_DAC(i2c_address,5,dac_reg[5]);
     Write_To_DAC(i2c_address,6,dac_reg[6]);
     Write_To_DAC(i2c_address,9,dac_reg[9]);
-    ResetChip();            
+    ResetChip(1);            
 }
 
-void ResetChip()
+void ResetChip(unsigned char mode)
 {   
-    //printf("Reset\n\r");  
-    Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
-    delay_ms(50);
-    Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
-    delay_ms(50);
+    //printf("Reset\n\r");
+    if(!mode)
+    {  
+        Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
+    }
+    else
+    {
+        Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
+    }
 }
 
 void DF_Check()
@@ -561,7 +564,6 @@ void DF_Check()
     Write_To_DAC(i2c_address,2,dac_reg[2]);
     Write_To_DAC(i2c_address,5,dac_reg[5]);
     
-    ResetChip();      
 }
 
 void SW_Mute(unsigned char mute)

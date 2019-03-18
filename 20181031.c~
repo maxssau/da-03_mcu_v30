@@ -1,24 +1,3 @@
-/*******************************************************
-This program was created by the
-CodeWizardAVR V3.12 Advanced
-Automatic Program Generator
-© Copyright 1998-2014 Pavel Haiduc, HP InfoTech s.r.l.
-http://www.hpinfotech.com
-
-Project : DA-03s v2.0 FW v1.00
-Version : 1.00
-Date    : 31.10.2018
-Author  : Maximov Evgeny
-Company : L & Z Audio
-Comments: 
-
-
-Chip type               : ATmega48PA
-AVR Core Clock frequency: 1,000000 MHz
-Memory model            : Small
-External RAM size       : 0
-Data Stack size         : 128
-*******************************************************/
 
 void Write_To_DAC (unsigned char,unsigned char,unsigned char);
 void SampleRateCheck(unsigned char);
@@ -26,6 +5,7 @@ void ResetChip();
 void DF_Check();
 char getchar(void);
 void putchar(char);
+void SW_Mute(unsigned char mute);
 
 #include <mega48pa.h>
 #include <delay.h>
@@ -33,22 +13,23 @@ void putchar(char);
 // Declare your global variables here
 
 unsigned char dac_reg[22];
-
+char buff[10];
+int j=0;
+char c=0;
 //unsigned char _4490_dac_reg[10];
 //unsigned char _4493_dac_reg[22];
 
-flash unsigned char _4490_def_values[]={0x87,0xA,0,0,0,0,130,0,0,0,0,0,0,0,0};
+//flash unsigned char _4490_def_values[]={0x87,0xA,0,128,128,0,130,0,0,0,0,0,0,0,0};
+flash unsigned char _4490_def_values[]={0x8F,0xA,0,0xff,0xff,0x80,130,0,0,0,0};
 flash unsigned char _4493_def_values[]={143,2,0,255,255,64,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};     
 
 _Bool StartUp=0;
-unsigned char i2c_address=0;
+unsigned char i2c_address=16;
 
-//_Bool _4493_mode; // hardware define
-//_Bool Scale;      // hardware define
-
-// logick vars 
-unsigned char last_SR=0;
-unsigned char last_DF=0;
+// logic vars 
+unsigned char last_SR=255;
+unsigned char last_DF=255;
+unsigned char last_mute=255;
 
 // GPIO Defines
 #define F0 PIND.3
@@ -254,9 +235,6 @@ else
 
 void main(void)
 {
-// Declare your local variables here
-
-// Crystal Oscillator division factor: 1
 #pragma optsize-
 CLKPR=(1<<CLKPCE);
 CLKPR=(0<<CLKPCE) | (0<<CLKPS3) | (0<<CLKPS2) | (0<<CLKPS1) | (0<<CLKPS0);
@@ -264,10 +242,9 @@ CLKPR=(0<<CLKPCE) | (0<<CLKPS3) | (0<<CLKPS2) | (0<<CLKPS1) | (0<<CLKPS0);
 #pragma optsize+
 #endif
 
-// Input/Output Ports initialization
 // Port B initialization
 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In 
-DDRB=(0<<DDB7) | (1<<DDB6) | (0<<DDB5) | (0<<DDB4) | (0<<DDB3) | (1<<DDB2) | (0<<DDB1) | (0<<DDB0);
+DDRB=(0<<DDB7) | (0<<DDB6) | (0<<DDB5) | (0<<DDB4) | (0<<DDB3) | (1<<DDB2) | (0<<DDB1) | (0<<DDB0);
 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=P Bit0=P 
 PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (1<<PORTB1) | (1<<PORTB0);
 
@@ -283,30 +260,12 @@ DDRD=(0<<DDD7) | (0<<DDD6) | (0<<DDD5) | (0<<DDD4) | (0<<DDD3) | (0<<DDD2) | (0<
 // State: Bit7=P Bit6=T Bit5=T Bit4=P Bit3=T Bit2=T Bit1=T Bit0=T 
 PORTD=(1<<PORTD7) | (0<<PORTD6) | (0<<PORTD5) | (1<<PORTD4) | (0<<PORTD3) | (0<<PORTD2) | (0<<PORTD1) | (0<<PORTD0);
 
-// Timer/Counter 0 initialization
-// Clock source: System Clock
-// Clock value: Timer 0 Stopped
-// Mode: Normal top=0xFF
-// OC0A output: Disconnected
-// OC0B output: Disconnected
 TCCR0A=(0<<COM0A1) | (0<<COM0A0) | (0<<COM0B1) | (0<<COM0B0) | (0<<WGM01) | (0<<WGM00);
 TCCR0B=(0<<WGM02) | (0<<CS02) | (0<<CS01) | (0<<CS00);
 TCNT0=0x00;
 OCR0A=0x00;
 OCR0B=0x00;
 
-// Timer/Counter 1 initialization
-// Clock source: System Clock
-// Clock value: Timer1 Stopped
-// Mode: Normal top=0xFFFF
-// OC1A output: Disconnected
-// OC1B output: Disconnected
-// Noise Canceler: Off
-// Input Capture on Falling Edge
-// Timer1 Overflow Interrupt: Off
-// Input Capture Interrupt: Off
-// Compare A Match Interrupt: Off
-// Compare B Match Interrupt: Off
 TCCR1A=(0<<COM1A1) | (0<<COM1A0) | (0<<COM1B1) | (0<<COM1B0) | (0<<WGM11) | (0<<WGM10);
 TCCR1B=(0<<ICNC1) | (0<<ICES1) | (0<<WGM13) | (0<<WGM12) | (0<<CS12) | (0<<CS11) | (0<<CS10);
 TCNT1H=0x00;
@@ -318,12 +277,6 @@ OCR1AL=0x00;
 OCR1BH=0x00;
 OCR1BL=0x00;
 
-// Timer/Counter 2 initialization
-// Clock source: System Clock
-// Clock value: Timer2 Stopped
-// Mode: Normal top=0xFF
-// OC2A output: Disconnected
-// OC2B output: Disconnected
 ASSR=(0<<EXCLK) | (0<<AS2);
 TCCR2A=(0<<COM2A1) | (0<<COM2A0) | (0<<COM2B1) | (0<<COM2B0) | (0<<WGM21) | (0<<WGM20);
 TCCR2B=(0<<WGM22) | (0<<CS22) | (0<<CS21) | (0<<CS20);
@@ -340,46 +293,22 @@ TIMSK1=(0<<ICIE1) | (0<<OCIE1B) | (0<<OCIE1A) | (0<<TOIE1);
 // Timer/Counter 2 Interrupt(s) initialization
 TIMSK2=(0<<OCIE2B) | (0<<OCIE2A) | (0<<TOIE2);
 
-// External Interrupt(s) initialization
-// INT0: Off
-// INT1: Off
-// Interrupt on any change on pins PCINT0-7: Off
-// Interrupt on any change on pins PCINT8-14: Off
-// Interrupt on any change on pins PCINT16-23: Off
 EICRA=(0<<ISC11) | (0<<ISC10) | (0<<ISC01) | (0<<ISC00);
 EIMSK=(0<<INT1) | (0<<INT0);
 PCICR=(0<<PCIE2) | (0<<PCIE1) | (0<<PCIE0);
 
-// USART initialization
-// Communication Parameters: 8 Data, 1 Stop, No Parity
-// USART Receiver: On
-// USART Transmitter: On
-// USART0 Mode: Asynchronous
-// USART Baud Rate: 4800
 UCSR0A=(0<<RXC0) | (0<<TXC0) | (0<<UDRE0) | (0<<FE0) | (0<<DOR0) | (0<<UPE0) | (0<<U2X0) | (0<<MPCM0);
 UCSR0B=(1<<RXCIE0) | (1<<TXCIE0) | (0<<UDRIE0) | (1<<RXEN0) | (1<<TXEN0) | (0<<UCSZ02) | (0<<RXB80) | (0<<TXB80);
 UCSR0C=(0<<UMSEL01) | (0<<UMSEL00) | (0<<UPM01) | (0<<UPM00) | (0<<USBS0) | (1<<UCSZ01) | (1<<UCSZ00) | (0<<UCPOL0);
 UBRR0H=0x00;
 UBRR0L=0x0C;
 
-// Analog Comparator initialization
-// Analog Comparator: Off
-// The Analog Comparator's positive input is
-// connected to the AIN0 pin
-// The Analog Comparator's negative input is
-// connected to the AIN1 pin
 ACSR=(1<<ACD) | (0<<ACBG) | (0<<ACO) | (0<<ACI) | (0<<ACIE) | (0<<ACIC) | (0<<ACIS1) | (0<<ACIS0);
 ADCSRB=(0<<ACME);
-// Digital input buffer on AIN0: On
-// Digital input buffer on AIN1: On
 DIDR1=(0<<AIN0D) | (0<<AIN1D);
 
-// ADC initialization
-// ADC disabled
 ADCSRA=(0<<ADEN) | (0<<ADSC) | (0<<ADATE) | (0<<ADIF) | (0<<ADIE) | (0<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
 
-// SPI initialization
-// SPI disabled
 SPCR=(0<<SPIE) | (0<<SPE) | (0<<DORD) | (0<<MSTR) | (0<<CPOL) | (0<<CPHA) | (0<<SPR1) | (0<<SPR0);
 
 // TWI initialization
@@ -392,17 +321,18 @@ twi_master_init(62);
 
 while (1)
       {
-      // Place your code here
         if(!StartUp)
         {
-            // first start up
-                
-            // unreset
-            Mute=1;
+            // first start up                
+            int j=0;
+            int i=0;
+            delay_ms(200);
+            j=0;
+            DAC_reset=0;
             delay_ms(100);
             DAC_reset=1;
             delay_ms(100);
-                
+            SW_Mute(1);    
             if(_4493)
             {
                 // 4493 mode
@@ -411,67 +341,74 @@ while (1)
                 {
                     // write default values to dac
                     dac_reg[i]=_4493_def_values[i];
-                    Write_To_DAC(i2c_address,i,dac_reg[i]);
                 }
             }
             else
             {
                 // 4490 mode
                 char i=0;
+                
+                printf("4490 mode\n\r");
                 for(i=0;i<10;i++)
                 {
-                    // write default values to dac
                     dac_reg[i]=_4490_def_values[i];
-                    Write_To_DAC(i2c_address,i,dac_reg[i]);                    
+                    Write_To_DAC(i2c_address,i,dac_reg[i]);                   
                 }
             }
                 
-            delay_ms(100);
+            delay_ms(50);
             StartUp=1;
             ResetChip();
-            Mute=0;
+            SW_Mute(0);
         }
         else
         {
             // normal work
-            unsigned char _SR=1*F0+2*F1+4*F2+8*F3; //calculate current mode
+            unsigned char _SR=1*F1+2*F2; //calculate current mode 
+            
             unsigned char _DF=SSLOW*1+SD*2+SLOW*4;
             
-            // Samplerate check
-            if(_SR!=last_SR)
+            if(last_mute!=Mute)
             {
-                Mute=1;
+                last_mute=Mute;
+                SW_Mute(Mute);
+            }
+            
+            // Samplerate check
+            if((_SR+F0)!=last_SR)
+            {
+                SW_Mute(1);
                 SampleRateCheck(_SR);
-                last_SR=_SR;
+                last_SR=_SR+F0;
                 if(!_4493)
                 {
                     // strong check unsupported mode:
                     // AK4490 does not support DSD512 mode
                     if(_SR>11)
                     {
-                        Mute=1;
+                        SW_Mute(1);
                     }
                     else
                     {
-                        Mute=0;
+                        SW_Mute(0);
                     }    
                 }
                 else
                 {
-                    Mute=0;
+                    SW_Mute(0);
                 }
-                printf("Current mode: %i\n", _SR);
+                printf("Current mode: %i\n\r", _SR);
             };
             
             
             if(_DF!=last_DF)
             {
-                Mute=1;
+                SW_Mute(1);
                 DF_Check();
                 ResetChip();
-                Mute=0;
                 last_DF=_DF;
-                printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n",SLOW,SD,SSLOW);
+                printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n\r",SLOW,SD,SSLOW);
+                SW_Mute(0);
             }
         }
       }
@@ -479,157 +416,165 @@ while (1)
 
 void Write_To_DAC(unsigned char chip_address, unsigned char address, unsigned char data)
 {
+    char i=0;
     struct _data
     {
-        unsigned char msb;
         unsigned char lsb;
         unsigned char data;
     } DAC_REG;
-    DAC_REG.msb=0x0;
     DAC_REG.lsb=address;
     DAC_REG.data=data;
-    twi_master_trans(chip_address,(unsigned char*)&DAC_REG,3,0,0);
-    delay_ms(50);        
+    if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,2,0,0))
+    {
+        printf("write error!\n\r");
+    }
+    delay_ms(200);
+    if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,1,&c,1))
+    {
+        printf("error control\n\r");
+    }       
 }
 
 void SampleRateCheck(unsigned char mode)
 {
-    if(mode<9)
+    if(DSD)
     {
-        // clear DP bit    
-        _clrbit(dac_reg[2],7);
-        Write_To_DAC(i2c_address,2,dac_reg[2]);
-        //pcm mode
-        if(F0==1)
-        {
-            // 44.1 kHz MCLK mode
-            Scale_44=0;
-            Scale_48=1;       
-        }
-        else
-        {
-            // 48 kHz MCLK Mode
-            Scale_44=1;
-            Scale_48=0;
-        };
-        ResetChip();
+        printf("DSD\n\r");    
+        dac_reg[2]=_setbit(dac_reg[2],7);
     }
     else
     {
-        // dsd mode
-        if(Scale)
-        {
-            // 44.1 kHz MCLK mode
-            Scale_44=0;
-            Scale_48=1;
-        }
-        else
-        {
-            // 48 kHz MCLK Mode
-            Scale_44=1;
-            Scale_48=0;
-        };
+        printf("PCM\n\r");
+        dac_reg[2]=_clrbit(dac_reg[2],7);
         
-        // set DP bit    
-        _setbit(dac_reg[2],7);
-        
-        switch(mode)
+    };
+    switch(mode)
         {
-            case 9:
+            case 0:
             {
                 //DSD64 Mode 
-                // set DSD mode
                 // DSDSEL0
-                _clrbit(dac_reg[6],0);
-                // DSDSEL1
-                _clrbit(dac_reg[9],0);
-                // write to DAC
+                
+                dac_reg[6]=_clrbit(dac_reg[6],0);
+                dac_reg[9]=_clrbit(dac_reg[9],0);                
+                //dac_reg[1]=_clrbit(dac_reg[1],3);
+                //dac_reg[1]=_clrbit(dac_reg[1],4);
+                //dac_reg[5]=_clrbit(dac_reg[5],1);
+                  
             }
             break;
-            case 10:
+            case 1:
             {
-                //DSD128 Mode
-                // set DSD mode
-                // DSDSEL0
-                _setbit(dac_reg[6],0);
-                // DSDSEL1
-                _clrbit(dac_reg[9],0);
-                // write to DAC    
+                dac_reg[6]=_setbit(dac_reg[6],0);
+                dac_reg[9]=_clrbit(dac_reg[9],0);
+                //dac_reg[1]=_setbit(dac_reg[1],3);
+                //dac_reg[1]=_clrbit(dac_reg[1],4);
+                //dac_reg[5]=_clrbit(dac_reg[5],1);       
             }
             break;
-            case 11:
+            case 2:
             {
-                //DSD256 Mode
-                // set DP bit    
-                _setbit(dac_reg[2],7);    
-                // set DSD mode
-                // DSDSEL0
-                _clrbit(dac_reg[6],0);
-                // DSDSEL1
-                _setbit(dac_reg[9],0);
-                // write to DAC    
+                dac_reg[6]=_clrbit(dac_reg[6],0);
+                dac_reg[9]=_setbit(dac_reg[9],0);        
+                //dac_reg[1]=_clrbit(dac_reg[1],3);
+                //dac_reg[1]=_setbit(dac_reg[1],4);
+                //dac_reg[5]=_clrbit(dac_reg[5],1);
+                
             }
             break;
-            case 12:
+            case 3:
             {
-                //DSD512 Mode    
-                // set DSD mode
-                // DSDSEL0
-                _setbit(dac_reg[6],0);
-                // DSDSEL1
-                _setbit(dac_reg[9],0);
-                // write to DAC   
+                dac_reg[6]=_setbit(dac_reg[6],0);
+                dac_reg[9]=_setbit(dac_reg[9],0);
+                //dac_reg[1]=_clrbit(dac_reg[1],3);
+                //dac_reg[1]=_clrbit(dac_reg[1],4);
+                //dac_reg[5]=_setbit(dac_reg[5],1);
             }
             break;
             
         };
-        Write_To_DAC(i2c_address,2,dac_reg[2]);
-        Write_To_DAC(i2c_address,6,dac_reg[6]);
-        Write_To_DAC(i2c_address,9,dac_reg[9]);
-        ResetChip();
-    }            
+        if(F0)
+        {
+            // 44.1 kHz MCLK mode
+            
+            Scale_44=1;
+            Scale_48=0;
+            printf("44.1 kHz\n\r");
+                   
+        }
+        else
+        {
+            // 48 kHz MCLK Mode
+            Scale_44=0;
+            Scale_48=1;
+            printf("48 kHz\n\r");
+            
+        };
+    
+    
+    printf("6=%X,9=%X\r\n",dac_reg[6],dac_reg[9]);    
+    Write_To_DAC(i2c_address,1,dac_reg[1]);
+    Write_To_DAC(i2c_address,2,dac_reg[2]);
+    Write_To_DAC(i2c_address,5,dac_reg[5]);
+    Write_To_DAC(i2c_address,6,dac_reg[6]);
+    Write_To_DAC(i2c_address,9,dac_reg[9]);
+    ResetChip();            
 }
 
 void ResetChip()
 {   
-    //reset chip
-    _clrbit(dac_reg[0],0);
-    Write_To_DAC(i2c_address,0,dac_reg[0]);
-    delay_ms(10);
-    _setbit(dac_reg[0],0);
-    Write_To_DAC(i2c_address,0,dac_reg[0]);
-    delay_ms(10);    
+    //printf("Reset\n\r");  
+    Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
+    delay_ms(50);
+    Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
+    delay_ms(50);
 }
 
 void DF_Check()
 {
     if(SSLOW)
     {
-        _setbit(dac_reg[5],0);
+        dac_reg[5]=_setbit(dac_reg[5],0);
     }
     else
     {   
-        _clrbit(dac_reg[5],0);
+        dac_reg[5]=_clrbit(dac_reg[5],0);
     }
     
     if(SD)
     {
-        _setbit(dac_reg[1],5);
+        dac_reg[1]=_setbit(dac_reg[1],5);
     }
     else
     {
-        _clrbit(dac_reg[1],5);
+        dac_reg[1]=_clrbit(dac_reg[1],5);
     }                                 
     if(SLOW)
     {   
-        _setbit(dac_reg[2],0);
+        dac_reg[2]=_setbit(dac_reg[2],0);
     }
     else
     {
-        _clrbit(dac_reg[2],0);    
+        dac_reg[2]=_clrbit(dac_reg[2],0);    
     }
     Write_To_DAC(i2c_address,1,dac_reg[1]);
     Write_To_DAC(i2c_address,2,dac_reg[2]);
     Write_To_DAC(i2c_address,5,dac_reg[5]);
+    
     ResetChip();      
+}
+
+void SW_Mute(unsigned char mute)
+{
+    if(mute)
+    {
+        dac_reg[1]=_setbit(dac_reg[1],0);
+        //printf("Mute\n\r");
+    }
+    else
+    {
+        dac_reg[1]=_clrbit(dac_reg[1],0);
+        //printf("UnMute\r\n");
+    };
+    Write_To_DAC(i2c_address,1,dac_reg[1]);    
 }

@@ -1173,8 +1173,7 @@ _0x0:
 	.DB  0x43,0x4D,0xA,0xD,0x0,0x34,0x34,0x2E
 	.DB  0x31,0x20,0x6B,0x48,0x7A,0xA,0xD,0x0
 	.DB  0x34,0x38,0x20,0x6B,0x48,0x7A,0xA,0xD
-	.DB  0x0,0x36,0x3D,0x25,0x58,0x2C,0x39,0x3D
-	.DB  0x25,0x58,0xD,0xA,0x0
+	.DB  0x0
 _0x2020003:
 	.DB  0x7
 
@@ -1266,7 +1265,7 @@ __GLOBAL_INI_END:
 ;
 ;void Write_To_DAC (unsigned char,unsigned char,unsigned char);
 ;void SampleRateCheck(unsigned char);
-;void ResetChip();
+;void ResetChip(unsigned char);
 ;void DF_Check();
 ;char getchar(void);
 ;void putchar(char);
@@ -1890,19 +1889,22 @@ _0x22:
 	RCALL SUBOPT_0x4
 ; 0000 014D             DAC_reset=1;
 	SBI  0x5,2
-; 0000 014E             delay_ms(100);
+; 0000 014E             ResetChip(0);
+	LDI  R26,LOW(0)
+	RCALL _ResetChip
+; 0000 014F             delay_ms(100);
 	LDI  R26,LOW(100)
 	RCALL SUBOPT_0x4
-; 0000 014F             SW_Mute(1);
+; 0000 0150             SW_Mute(1);
 	LDI  R26,LOW(1)
 	RCALL _SW_Mute
-; 0000 0150             if(_4493)
+; 0000 0151             if(_4493)
 	SBIS 0x9,4
 	RJMP _0x2A
-; 0000 0151             {
-; 0000 0152                 // 4493 mode
-; 0000 0153                 char i=0;
-; 0000 0154                 for(i=0;i<22;i++)
+; 0000 0152             {
+; 0000 0153                 // 4493 mode
+; 0000 0154                 char i=0;
+; 0000 0155                 for(i=0;i<22;i++)
 	SBIW R28,1
 	RCALL SUBOPT_0x5
 ;	j -> Y+3
@@ -1913,29 +1915,29 @@ _0x2C:
 	LD   R26,Y
 	CPI  R26,LOW(0x16)
 	BRSH _0x2D
-; 0000 0155                 {
-; 0000 0156                     // write default values to dac
-; 0000 0157                     dac_reg[i]=_4493_def_values[i];
+; 0000 0156                 {
+; 0000 0157                     // write default values to dac
+; 0000 0158                     dac_reg[i]=_4493_def_values[i];
 	RCALL SUBOPT_0x6
 	SUBI R30,LOW(-__4493_def_values*2)
 	SBCI R31,HIGH(-__4493_def_values*2)
 	LPM  R30,Z
 	ST   X,R30
-; 0000 0158                 }
+; 0000 0159                 }
 	LD   R30,Y
 	SUBI R30,-LOW(1)
 	ST   Y,R30
 	RJMP _0x2C
 _0x2D:
-; 0000 0159             }
-	RJMP _0x58
-; 0000 015A             else
+; 0000 015A             }
+	RJMP _0x5A
+; 0000 015B             else
 _0x2A:
-; 0000 015B             {
-; 0000 015C                 // 4490 mode
-; 0000 015D                 char i=0;
-; 0000 015E 
-; 0000 015F                 printf("4490 mode\n\r");
+; 0000 015C             {
+; 0000 015D                 // 4490 mode
+; 0000 015E                 char i=0;
+; 0000 015F 
+; 0000 0160                 printf("4490 mode\n\r");
 	SBIW R28,1
 	RCALL SUBOPT_0x5
 ;	j -> Y+3
@@ -1944,59 +1946,59 @@ _0x2A:
 	__POINTW1FN _0x0,0
 	RCALL SUBOPT_0x7
 	RCALL SUBOPT_0x8
-; 0000 0160                 for(i=0;i<10;i++)
+; 0000 0161                 for(i=0;i<10;i++)
 	RCALL SUBOPT_0x5
 _0x30:
 	LD   R26,Y
 	CPI  R26,LOW(0xA)
 	BRSH _0x31
-; 0000 0161                 {
-; 0000 0162                     dac_reg[i]=_4490_def_values[i];
+; 0000 0162                 {
+; 0000 0163                     dac_reg[i]=_4490_def_values[i];
 	RCALL SUBOPT_0x6
 	SUBI R30,LOW(-__4490_def_values*2)
 	SBCI R31,HIGH(-__4490_def_values*2)
 	LPM  R30,Z
 	ST   X,R30
-; 0000 0163                     Write_To_DAC(i2c_address,i,dac_reg[i]);
+; 0000 0164                     Write_To_DAC(i2c_address,i,dac_reg[i]);
 	ST   -Y,R8
 	LDD  R30,Y+1
 	ST   -Y,R30
 	LDD  R30,Y+2
 	RCALL SUBOPT_0x2
 	RCALL _Write_To_DAC
-; 0000 0164                 }
+; 0000 0165                 }
 	LD   R30,Y
 	SUBI R30,-LOW(1)
 	ST   Y,R30
 	RJMP _0x30
 _0x31:
-; 0000 0165             }
-_0x58:
+; 0000 0166             }
+_0x5A:
 	ADIW R28,1
-; 0000 0166 
-; 0000 0167             delay_ms(50);
+; 0000 0167 
+; 0000 0168             delay_ms(50);
 	LDI  R26,LOW(50)
 	RCALL SUBOPT_0x4
-; 0000 0168             StartUp=1;
+; 0000 0169             StartUp=1;
 	LDI  R30,LOW(1)
 	MOV  R5,R30
-; 0000 0169             ResetChip();
-	RCALL _ResetChip
-; 0000 016A             SW_Mute(0);
+; 0000 016A             ResetChip(1);
+	RCALL SUBOPT_0x9
+; 0000 016B             SW_Mute(0);
 	LDI  R26,LOW(0)
 	RCALL _SW_Mute
-; 0000 016B         }
+; 0000 016C         }
 	ADIW R28,4
-; 0000 016C         else
+; 0000 016D         else
 	RJMP _0x32
 _0x25:
-; 0000 016D         {
-; 0000 016E             // normal work
-; 0000 016F             unsigned char _SR=1*F1+2*F2; //calculate current mode
-; 0000 0170 
-; 0000 0171             unsigned char _DF=SSLOW*1+SD*2+SLOW*4;
-; 0000 0172 
-; 0000 0173             if(last_mute!=Mute)
+; 0000 016E         {
+; 0000 016F             // normal work
+; 0000 0170             unsigned char _SR=1*F1+2*F2; //calculate current mode
+; 0000 0171 
+; 0000 0172             unsigned char _DF=SSLOW*1+SD*2+SLOW*4;
+; 0000 0173 
+; 0000 0174             if(last_mute!=Mute)
 	SBIW R28,2
 ;	_SR -> Y+1
 ;	_DF -> Y+0
@@ -2041,21 +2043,21 @@ _0x25:
 	CP   R30,R26
 	CPC  R31,R27
 	BREQ _0x33
-; 0000 0174             {
-; 0000 0175                 last_mute=Mute;
+; 0000 0175             {
+; 0000 0176                 last_mute=Mute;
 	LDI  R30,0
 	SBIC 0x3,6
 	LDI  R30,1
 	MOV  R9,R30
-; 0000 0176                 SW_Mute(Mute);
+; 0000 0177                 SW_Mute(Mute);
 	LDI  R26,0
 	SBIC 0x3,6
 	LDI  R26,1
 	RCALL _SW_Mute
-; 0000 0177             }
-; 0000 0178 
-; 0000 0179             // Samplerate check
-; 0000 017A             if((_SR+F0)!=last_SR)
+; 0000 0178             }
+; 0000 0179 
+; 0000 017A             // Samplerate check
+; 0000 017B             if((_SR+F0)!=last_SR)
 _0x33:
 	LDD  R26,Y+1
 	CLR  R27
@@ -2070,123 +2072,125 @@ _0x33:
 	CP   R30,R26
 	CPC  R31,R27
 	BREQ _0x34
-; 0000 017B             {
-; 0000 017C                 SW_Mute(1);
-	LDI  R26,LOW(1)
-	RCALL _SW_Mute
-; 0000 017D                 SampleRateCheck(_SR);
+; 0000 017C             {
+; 0000 017D                 ResetChip(0);
+	RCALL SUBOPT_0xA
+; 0000 017E                 SW_Mute(1);
+; 0000 017F                 SampleRateCheck(_SR);
 	LDD  R26,Y+1
 	RCALL _SampleRateCheck
-; 0000 017E                 last_SR=_SR+F0;
+; 0000 0180                 last_SR=_SR+F0;
 	LDI  R30,0
 	SBIC 0x9,3
 	LDI  R30,1
 	LDD  R26,Y+1
 	ADD  R30,R26
 	MOV  R7,R30
-; 0000 017F                 if(!_4493)
+; 0000 0181                 if(!_4493)
 	SBIC 0x9,4
 	RJMP _0x35
-; 0000 0180                 {
-; 0000 0181                     // strong check unsupported mode:
-; 0000 0182                     // AK4490 does not support DSD512 mode
-; 0000 0183                     if(_SR>11)
+; 0000 0182                 {
+; 0000 0183                     // strong check unsupported mode:
+; 0000 0184                     // AK4490 does not support DSD512 mode
+; 0000 0185                     if(_SR>11)
 	LDD  R26,Y+1
 	CPI  R26,LOW(0xC)
 	BRLO _0x36
-; 0000 0184                     {
-; 0000 0185                         SW_Mute(1);
+; 0000 0186                     {
+; 0000 0187                         SW_Mute(1);
 	LDI  R26,LOW(1)
-	RJMP _0x59
-; 0000 0186                     }
-; 0000 0187                     else
+	RJMP _0x5B
+; 0000 0188                     }
+; 0000 0189                     else
 _0x36:
-; 0000 0188                     {
-; 0000 0189                         SW_Mute(0);
+; 0000 018A                     {
+; 0000 018B                         SW_Mute(0);
 	LDI  R26,LOW(0)
-_0x59:
+_0x5B:
 	RCALL _SW_Mute
-; 0000 018A                     }
-; 0000 018B                 }
-; 0000 018C                 else
+; 0000 018C                     }
+; 0000 018D                 }
+; 0000 018E                 else
 	RJMP _0x38
 _0x35:
-; 0000 018D                 {
-; 0000 018E                     SW_Mute(0);
+; 0000 018F                 {
+; 0000 0190                     SW_Mute(0);
 	LDI  R26,LOW(0)
 	RCALL _SW_Mute
-; 0000 018F                 }
+; 0000 0191                 }
 _0x38:
-; 0000 0190                 printf("Current mode: %i\n\r", _SR);
+; 0000 0192                 printf("Current mode: %i\n\r", _SR);
 	__POINTW1FN _0x0,12
 	RCALL SUBOPT_0x7
 	LDD  R30,Y+3
-	RCALL SUBOPT_0x9
+	RCALL SUBOPT_0xB
 	LDI  R24,4
 	RCALL _printf
 	ADIW R28,6
-; 0000 0191             };
+; 0000 0193                 ResetChip(1);
+	RCALL SUBOPT_0x9
+; 0000 0194             };
 _0x34:
-; 0000 0192 
-; 0000 0193 
-; 0000 0194             if(_DF!=last_DF)
+; 0000 0195 
+; 0000 0196 
+; 0000 0197             if(_DF!=last_DF)
 	LD   R26,Y
 	CP   R10,R26
 	BREQ _0x39
-; 0000 0195             {
-; 0000 0196                 SW_Mute(1);
-	LDI  R26,LOW(1)
-	RCALL _SW_Mute
-; 0000 0197                 DF_Check();
+; 0000 0198             {
+; 0000 0199                 ResetChip(0);
+	RCALL SUBOPT_0xA
+; 0000 019A                 SW_Mute(1);
+; 0000 019B                 DF_Check();
 	RCALL _DF_Check
-; 0000 0198                 ResetChip();
-	RCALL _ResetChip
-; 0000 0199                 last_DF=_DF;
+; 0000 019C                 last_DF=_DF;
 	LDD  R10,Y+0
-; 0000 019A                 printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n\r",SLOW,SD,SSLOW);
+; 0000 019D                 printf("Digital Filter: SLOW=%i, SD=%i, SSLOW=%i\n\r",SLOW,SD,SSLOW);
 	__POINTW1FN _0x0,31
 	RCALL SUBOPT_0x7
 	LDI  R30,0
 	SBIC 0x3,1
 	LDI  R30,1
-	RCALL SUBOPT_0x9
+	RCALL SUBOPT_0xB
 	LDI  R30,0
 	SBIC 0x3,0
 	LDI  R30,1
-	RCALL SUBOPT_0x9
+	RCALL SUBOPT_0xB
 	LDI  R30,0
 	SBIC 0x9,7
 	LDI  R30,1
-	RCALL SUBOPT_0x9
+	RCALL SUBOPT_0xB
 	LDI  R24,12
 	RCALL _printf
 	ADIW R28,14
-; 0000 019B                 SW_Mute(0);
+; 0000 019E                 ResetChip(1);
+	RCALL SUBOPT_0x9
+; 0000 019F                 SW_Mute(0);
 	LDI  R26,LOW(0)
 	RCALL _SW_Mute
-; 0000 019C             }
-; 0000 019D         }
+; 0000 01A0             }
+; 0000 01A1         }
 _0x39:
 	ADIW R28,2
 _0x32:
-; 0000 019E       }
+; 0000 01A2       }
 	RJMP _0x22
-; 0000 019F }
+; 0000 01A3 }
 _0x3A:
 	RJMP _0x3A
 ; .FEND
 ;
 ;void Write_To_DAC(unsigned char chip_address, unsigned char address, unsigned char data)
-; 0000 01A2 {
+; 0000 01A6 {
 _Write_To_DAC:
 ; .FSTART _Write_To_DAC
-; 0000 01A3     char i=0;
-; 0000 01A4     struct _data
-; 0000 01A5     {
-; 0000 01A6         unsigned char lsb;
-; 0000 01A7         unsigned char data;
-; 0000 01A8     } DAC_REG;
-; 0000 01A9     DAC_REG.lsb=address;
+; 0000 01A7     char i=0;
+; 0000 01A8     struct _data
+; 0000 01A9     {
+; 0000 01AA         unsigned char lsb;
+; 0000 01AB         unsigned char data;
+; 0000 01AC     } DAC_REG;
+; 0000 01AD     DAC_REG.lsb=address;
 	ST   -Y,R26
 	SBIW R28,2
 	ST   -Y,R17
@@ -2199,11 +2203,11 @@ _Write_To_DAC:
 	LDI  R17,0
 	LDD  R30,Y+4
 	STD  Y+1,R30
-; 0000 01AA     DAC_REG.data=data;
+; 0000 01AE     DAC_REG.data=data;
 	LDD  R30,Y+3
 	STD  Y+2,R30
-; 0000 01AB     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,2,0,0))
-	RCALL SUBOPT_0xA
+; 0000 01AF     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,2,0,0))
+	RCALL SUBOPT_0xC
 	LDI  R30,LOW(2)
 	ST   -Y,R30
 	LDI  R30,LOW(0)
@@ -2213,18 +2217,18 @@ _Write_To_DAC:
 	RCALL _twi_master_trans
 	CPI  R30,0
 	BRNE _0x3B
-; 0000 01AC     {
-; 0000 01AD         printf("write error!\n\r");
+; 0000 01B0     {
+; 0000 01B1         printf("write error!\n\r");
 	__POINTW1FN _0x0,74
-	RCALL SUBOPT_0xB
-; 0000 01AE     }
-; 0000 01AF     delay_ms(200);
+	RCALL SUBOPT_0xD
+; 0000 01B2     }
+; 0000 01B3     delay_ms(200);
 _0x3B:
 	LDI  R26,LOW(200)
 	RCALL SUBOPT_0x4
-; 0000 01B0     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,1,&c,1))
-	RCALL SUBOPT_0xA
+; 0000 01B4     if(!twi_master_trans(chip_address,(unsigned char*)&DAC_REG,1,&c,1))
 	RCALL SUBOPT_0xC
+	RCALL SUBOPT_0xE
 	LDI  R30,LOW(6)
 	LDI  R31,HIGH(6)
 	RCALL SUBOPT_0x7
@@ -2232,12 +2236,12 @@ _0x3B:
 	RCALL _twi_master_trans
 	CPI  R30,0
 	BRNE _0x3C
-; 0000 01B1     {
-; 0000 01B2         printf("error control\n\r");
+; 0000 01B5     {
+; 0000 01B6         printf("error control\n\r");
 	__POINTW1FN _0x0,89
-	RCALL SUBOPT_0xB
-; 0000 01B3     }
-; 0000 01B4 }
+	RCALL SUBOPT_0xD
+; 0000 01B7     }
+; 0000 01B8 }
 _0x3C:
 	LDD  R17,Y+0
 	ADIW R28,6
@@ -2245,311 +2249,327 @@ _0x3C:
 ; .FEND
 ;
 ;void SampleRateCheck(unsigned char mode)
-; 0000 01B7 {
+; 0000 01BB {
 _SampleRateCheck:
 ; .FSTART _SampleRateCheck
-; 0000 01B8     if(DSD)
+; 0000 01BC     if(DSD)
 	ST   -Y,R26
 ;	mode -> Y+0
 	SBIS 0x9,6
 	RJMP _0x3D
-; 0000 01B9     {
-; 0000 01BA         printf("DSD\n\r");
+; 0000 01BD     {
+; 0000 01BE         printf("DSD\n\r");
 	__POINTW1FN _0x0,105
-	RCALL SUBOPT_0xB
-; 0000 01BB         dac_reg[2]=_setbit(dac_reg[2],7);
 	RCALL SUBOPT_0xD
+; 0000 01BF         dac_reg[2]=_setbit(dac_reg[2],7);
+	RCALL SUBOPT_0xF
 	RCALL __setbit
-	RJMP _0x5A
-; 0000 01BC     }
-; 0000 01BD     else
+	RJMP _0x5C
+; 0000 01C0     }
+; 0000 01C1     else
 _0x3D:
-; 0000 01BE     {
-; 0000 01BF         printf("PCM\n\r");
+; 0000 01C2     {
+; 0000 01C3         printf("PCM\n\r");
 	__POINTW1FN _0x0,111
-	RCALL SUBOPT_0xB
-; 0000 01C0         dac_reg[2]=_clrbit(dac_reg[2],7);
 	RCALL SUBOPT_0xD
+; 0000 01C4         dac_reg[2]=_clrbit(dac_reg[2],7);
+	RCALL SUBOPT_0xF
 	RCALL __clrbit
-_0x5A:
+_0x5C:
 	__PUTB1MN _dac_reg,2
-; 0000 01C1 
-; 0000 01C2     };
-; 0000 01C3     switch(mode)
+; 0000 01C5 
+; 0000 01C6     };
+; 0000 01C7     switch(mode)
 	LD   R30,Y
 	LDI  R31,0
-; 0000 01C4         {
-; 0000 01C5             case 0:
+; 0000 01C8         {
+; 0000 01C9             case 0:
 	SBIW R30,0
 	BRNE _0x42
-; 0000 01C6             {
-; 0000 01C7                 //DSD64 Mode
-; 0000 01C8                 // DSDSEL0
-; 0000 01C9 
-; 0000 01CA                 dac_reg[6]=_clrbit(dac_reg[6],0);
-	RCALL SUBOPT_0xE
-	RCALL __clrbit
-	RCALL SUBOPT_0xF
-; 0000 01CB                 dac_reg[9]=_clrbit(dac_reg[9],0);
-	RJMP _0x5B
-; 0000 01CC                 //dac_reg[1]=_clrbit(dac_reg[1],3);
-; 0000 01CD                 //dac_reg[1]=_clrbit(dac_reg[1],4);
-; 0000 01CE                 //dac_reg[5]=_clrbit(dac_reg[5],1);
-; 0000 01CF 
-; 0000 01D0             }
-; 0000 01D1             break;
-; 0000 01D2             case 1:
+; 0000 01CA             {
+; 0000 01CB                 //DSD64 Mode
+; 0000 01CC                 // DSDSEL0
+; 0000 01CD 
+; 0000 01CE                 dac_reg[6]=_clrbit(dac_reg[6],0);
+	RCALL SUBOPT_0x10
+	RCALL SUBOPT_0x11
+; 0000 01CF                 dac_reg[9]=_clrbit(dac_reg[9],0);
+	RCALL SUBOPT_0x12
+; 0000 01D0                 dac_reg[1]=_clrbit(dac_reg[1],3);
+	RCALL SUBOPT_0x13
+; 0000 01D1                 dac_reg[1]=_clrbit(dac_reg[1],4);
+	RCALL SUBOPT_0x14
+; 0000 01D2                 dac_reg[5]=_clrbit(dac_reg[5],1);
+	RCALL SUBOPT_0x15
+	RJMP _0x5D
+; 0000 01D3 
+; 0000 01D4             }
+; 0000 01D5             break;
+; 0000 01D6             case 1:
 _0x42:
 	CPI  R30,LOW(0x1)
 	LDI  R26,HIGH(0x1)
 	CPC  R31,R26
 	BRNE _0x43
-; 0000 01D3             {
-; 0000 01D4                 dac_reg[6]=_setbit(dac_reg[6],0);
-	RCALL SUBOPT_0xE
+; 0000 01D7             {
+; 0000 01D8                 dac_reg[6]=_setbit(dac_reg[6],0);
+	RCALL SUBOPT_0x10
+	RCALL SUBOPT_0x16
+; 0000 01D9                 dac_reg[9]=_clrbit(dac_reg[9],0);
+	RCALL SUBOPT_0x12
+; 0000 01DA                 dac_reg[1]=_setbit(dac_reg[1],3);
 	RCALL __setbit
-	RCALL SUBOPT_0xF
-; 0000 01D5                 dac_reg[9]=_clrbit(dac_reg[9],0);
-	RJMP _0x5B
-; 0000 01D6                 //dac_reg[1]=_setbit(dac_reg[1],3);
-; 0000 01D7                 //dac_reg[1]=_clrbit(dac_reg[1],4);
-; 0000 01D8                 //dac_reg[5]=_clrbit(dac_reg[5],1);
-; 0000 01D9             }
-; 0000 01DA             break;
-; 0000 01DB             case 2:
+	__PUTB1MN _dac_reg,1
+; 0000 01DB                 dac_reg[1]=_clrbit(dac_reg[1],4);
+	RCALL SUBOPT_0x14
+; 0000 01DC                 dac_reg[5]=_clrbit(dac_reg[5],1);
+	RCALL SUBOPT_0x15
+	RJMP _0x5D
+; 0000 01DD             }
+; 0000 01DE             break;
+; 0000 01DF             case 2:
 _0x43:
 	CPI  R30,LOW(0x2)
 	LDI  R26,HIGH(0x2)
 	CPC  R31,R26
 	BRNE _0x44
-; 0000 01DC             {
-; 0000 01DD                 dac_reg[6]=_clrbit(dac_reg[6],0);
-	RCALL SUBOPT_0xE
-	RCALL __clrbit
-	RJMP _0x5C
-; 0000 01DE                 dac_reg[9]=_setbit(dac_reg[9],0);
-; 0000 01DF                 //dac_reg[1]=_clrbit(dac_reg[1],3);
-; 0000 01E0                 //dac_reg[1]=_setbit(dac_reg[1],4);
-; 0000 01E1                 //dac_reg[5]=_clrbit(dac_reg[5],1);
-; 0000 01E2 
-; 0000 01E3             }
-; 0000 01E4             break;
-; 0000 01E5             case 3:
+; 0000 01E0             {
+; 0000 01E1                 dac_reg[6]=_clrbit(dac_reg[6],0);
+	RCALL SUBOPT_0x10
+	RCALL SUBOPT_0x11
+; 0000 01E2                 dac_reg[9]=_setbit(dac_reg[9],0);
+	RCALL SUBOPT_0x17
+; 0000 01E3                 dac_reg[1]=_clrbit(dac_reg[1],3);
+; 0000 01E4                 dac_reg[1]=_setbit(dac_reg[1],4);
+	RCALL SUBOPT_0x18
+	LDI  R26,LOW(4)
+	RCALL __setbit
+	__PUTB1MN _dac_reg,1
+; 0000 01E5                 dac_reg[5]=_clrbit(dac_reg[5],1);
+	RCALL SUBOPT_0x15
+	RJMP _0x5D
+; 0000 01E6 
+; 0000 01E7             }
+; 0000 01E8             break;
+; 0000 01E9             case 3:
 _0x44:
 	CPI  R30,LOW(0x3)
 	LDI  R26,HIGH(0x3)
 	CPC  R31,R26
 	BRNE _0x41
-; 0000 01E6             {
-; 0000 01E7                 dac_reg[6]=_setbit(dac_reg[6],0);
-	RCALL SUBOPT_0xE
-	RCALL __setbit
-_0x5C:
-	__PUTB1MN _dac_reg,6
-; 0000 01E8                 dac_reg[9]=_setbit(dac_reg[9],0);
-	__GETB1MN _dac_reg,9
+; 0000 01EA             {
+; 0000 01EB                 dac_reg[6]=_setbit(dac_reg[6],0);
 	RCALL SUBOPT_0x10
-_0x5B:
-	__PUTB1MN _dac_reg,9
-; 0000 01E9                 //dac_reg[1]=_clrbit(dac_reg[1],3);
-; 0000 01EA                 //dac_reg[1]=_clrbit(dac_reg[1],4);
-; 0000 01EB                 //dac_reg[5]=_setbit(dac_reg[5],1);
-; 0000 01EC             }
-; 0000 01ED             break;
-; 0000 01EE 
-; 0000 01EF         };
+	RCALL SUBOPT_0x16
+; 0000 01EC                 dac_reg[9]=_setbit(dac_reg[9],0);
+	RCALL SUBOPT_0x17
+; 0000 01ED                 dac_reg[1]=_clrbit(dac_reg[1],3);
+; 0000 01EE                 dac_reg[1]=_clrbit(dac_reg[1],4);
+	RCALL SUBOPT_0x14
+; 0000 01EF                 dac_reg[5]=_setbit(dac_reg[5],1);
+	RCALL SUBOPT_0x19
+	LDI  R26,LOW(1)
+	RCALL __setbit
+_0x5D:
+	__PUTB1MN _dac_reg,5
+; 0000 01F0             }
+; 0000 01F1             break;
+; 0000 01F2 
+; 0000 01F3         };
 _0x41:
-; 0000 01F0         if(F0)
+; 0000 01F4         if(F0)
 	SBIS 0x9,3
 	RJMP _0x46
-; 0000 01F1         {
-; 0000 01F2             // 44.1 kHz MCLK mode
-; 0000 01F3 
-; 0000 01F4             Scale_44=1;
+; 0000 01F5         {
+; 0000 01F6             // 44.1 kHz MCLK mode
+; 0000 01F7             Scale_44=1;
 	SBI  0x8,0
-; 0000 01F5             Scale_48=0;
+; 0000 01F8             Scale_48=0;
 	CBI  0x8,1
-; 0000 01F6             printf("44.1 kHz\n\r");
+; 0000 01F9             printf("44.1 kHz\n\r");
 	__POINTW1FN _0x0,117
-	RJMP _0x5D
-; 0000 01F7 
-; 0000 01F8         }
-; 0000 01F9         else
+	RJMP _0x5E
+; 0000 01FA         }
+; 0000 01FB         else
 _0x46:
-; 0000 01FA         {
-; 0000 01FB             // 48 kHz MCLK Mode
-; 0000 01FC             Scale_44=0;
+; 0000 01FC         {
+; 0000 01FD             // 48 kHz MCLK Mode
+; 0000 01FE             Scale_44=0;
 	CBI  0x8,0
-; 0000 01FD             Scale_48=1;
+; 0000 01FF             Scale_48=1;
 	SBI  0x8,1
-; 0000 01FE             printf("48 kHz\n\r");
+; 0000 0200             printf("48 kHz\n\r");
 	__POINTW1FN _0x0,128
-_0x5D:
+_0x5E:
 	ST   -Y,R31
 	ST   -Y,R30
 	RCALL SUBOPT_0x8
-; 0000 01FF 
-; 0000 0200         };
-; 0000 0201 
+; 0000 0201         };
 ; 0000 0202 
-; 0000 0203     printf("6=%X,9=%X\r\n",dac_reg[6],dac_reg[9]);
-	__POINTW1FN _0x0,137
-	RCALL SUBOPT_0x7
-	__GETB1MN _dac_reg,6
-	RCALL SUBOPT_0x9
-	__GETB1MN _dac_reg,9
-	RCALL SUBOPT_0x9
-	LDI  R24,8
-	RCALL _printf
-	ADIW R28,10
-; 0000 0204     Write_To_DAC(i2c_address,1,dac_reg[1]);
+; 0000 0203     Write_To_DAC(i2c_address,1,dac_reg[1]);
 	ST   -Y,R8
-	RCALL SUBOPT_0xC
-	RCALL SUBOPT_0x11
-; 0000 0205     Write_To_DAC(i2c_address,2,dac_reg[2]);
-; 0000 0206     Write_To_DAC(i2c_address,5,dac_reg[5]);
-; 0000 0207     Write_To_DAC(i2c_address,6,dac_reg[6]);
+	RCALL SUBOPT_0xE
+	RCALL SUBOPT_0x1A
+; 0000 0204     Write_To_DAC(i2c_address,2,dac_reg[2]);
+; 0000 0205     Write_To_DAC(i2c_address,5,dac_reg[5]);
+; 0000 0206     Write_To_DAC(i2c_address,6,dac_reg[6]);
 	ST   -Y,R8
 	LDI  R30,LOW(6)
 	ST   -Y,R30
 	__GETB2MN _dac_reg,6
 	RCALL _Write_To_DAC
-; 0000 0208     Write_To_DAC(i2c_address,9,dac_reg[9]);
+; 0000 0207     Write_To_DAC(i2c_address,9,dac_reg[9]);
 	ST   -Y,R8
 	LDI  R30,LOW(9)
 	ST   -Y,R30
 	__GETB2MN _dac_reg,9
 	RCALL _Write_To_DAC
-; 0000 0209     ResetChip();
-	RCALL _ResetChip
-; 0000 020A }
+; 0000 0208     ResetChip(1);
+	RCALL SUBOPT_0x9
+; 0000 0209 }
 	RJMP _0x2080004
 ; .FEND
 ;
-;void ResetChip()
-; 0000 020D {
+;void ResetChip(unsigned char mode)
+; 0000 020C {
 _ResetChip:
 ; .FSTART _ResetChip
-; 0000 020E     //printf("Reset\n\r");
-; 0000 020F     Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
-	RCALL SUBOPT_0x12
+; 0000 020D     //printf("Reset\n\r");
+; 0000 020E     if(!mode)
+	ST   -Y,R26
+;	mode -> Y+0
+	LD   R30,Y
+	CPI  R30,0
+	BRNE _0x50
+; 0000 020F     {
+; 0000 0210         Write_To_DAC(i2c_address,0,dac_reg[0]&0xFE);
+	RCALL SUBOPT_0x1B
 	ANDI R30,0xFE
-	RCALL SUBOPT_0x13
-; 0000 0210     delay_ms(50);
-; 0000 0211     Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
-	RCALL SUBOPT_0x12
+	RJMP _0x5F
+; 0000 0211     }
+; 0000 0212     else
+_0x50:
+; 0000 0213     {
+; 0000 0214         Write_To_DAC(i2c_address,0,dac_reg[0]|0x1);
+	RCALL SUBOPT_0x1B
 	ORI  R30,1
-	RCALL SUBOPT_0x13
-; 0000 0212     delay_ms(50);
-; 0000 0213 }
-	RET
+_0x5F:
+	MOV  R26,R30
+	RCALL _Write_To_DAC
+; 0000 0215     }
+; 0000 0216 }
+	RJMP _0x2080004
 ; .FEND
 ;
 ;void DF_Check()
-; 0000 0216 {
+; 0000 0219 {
 _DF_Check:
 ; .FSTART _DF_Check
-; 0000 0217     if(SSLOW)
+; 0000 021A     if(SSLOW)
 	SBIS 0x9,7
-	RJMP _0x50
-; 0000 0218     {
-; 0000 0219         dac_reg[5]=_setbit(dac_reg[5],0);
-	__GETB1MN _dac_reg,5
-	RCALL SUBOPT_0x10
-	RJMP _0x5E
-; 0000 021A     }
-; 0000 021B     else
-_0x50:
-; 0000 021C     {
-; 0000 021D         dac_reg[5]=_clrbit(dac_reg[5],0);
-	__GETB1MN _dac_reg,5
-	RCALL SUBOPT_0x14
-_0x5E:
-	__PUTB1MN _dac_reg,5
-; 0000 021E     }
-; 0000 021F 
-; 0000 0220     if(SD)
-	SBIS 0x3,0
 	RJMP _0x52
-; 0000 0221     {
-; 0000 0222         dac_reg[1]=_setbit(dac_reg[1],5);
-	RCALL SUBOPT_0x15
+; 0000 021B     {
+; 0000 021C         dac_reg[5]=_setbit(dac_reg[5],0);
+	RCALL SUBOPT_0x19
+	LDI  R26,LOW(0)
 	RCALL __setbit
-	RJMP _0x5F
-; 0000 0223     }
-; 0000 0224     else
-_0x52:
-; 0000 0225     {
-; 0000 0226         dac_reg[1]=_clrbit(dac_reg[1],5);
-	RCALL SUBOPT_0x15
-	RCALL __clrbit
-_0x5F:
-	__PUTB1MN _dac_reg,1
-; 0000 0227     }
-; 0000 0228     if(SLOW)
-	SBIS 0x3,1
-	RJMP _0x54
-; 0000 0229     {
-; 0000 022A         dac_reg[2]=_setbit(dac_reg[2],0);
-	__GETB1MN _dac_reg,2
-	RCALL SUBOPT_0x10
 	RJMP _0x60
-; 0000 022B     }
-; 0000 022C     else
-_0x54:
-; 0000 022D     {
-; 0000 022E         dac_reg[2]=_clrbit(dac_reg[2],0);
-	__GETB1MN _dac_reg,2
-	RCALL SUBOPT_0x14
+; 0000 021D     }
+; 0000 021E     else
+_0x52:
+; 0000 021F     {
+; 0000 0220         dac_reg[5]=_clrbit(dac_reg[5],0);
+	RCALL SUBOPT_0x19
+	LDI  R26,LOW(0)
+	RCALL __clrbit
 _0x60:
+	__PUTB1MN _dac_reg,5
+; 0000 0221     }
+; 0000 0222 
+; 0000 0223     if(SD)
+	SBIS 0x3,0
+	RJMP _0x54
+; 0000 0224     {
+; 0000 0225         dac_reg[1]=_setbit(dac_reg[1],5);
+	RCALL SUBOPT_0x18
+	LDI  R26,LOW(5)
+	RCALL __setbit
+	RJMP _0x61
+; 0000 0226     }
+; 0000 0227     else
+_0x54:
+; 0000 0228     {
+; 0000 0229         dac_reg[1]=_clrbit(dac_reg[1],5);
+	RCALL SUBOPT_0x18
+	LDI  R26,LOW(5)
+	RCALL __clrbit
+_0x61:
+	__PUTB1MN _dac_reg,1
+; 0000 022A     }
+; 0000 022B     if(SLOW)
+	SBIS 0x3,1
+	RJMP _0x56
+; 0000 022C     {
+; 0000 022D         dac_reg[2]=_setbit(dac_reg[2],0);
+	RCALL SUBOPT_0x1C
+	RCALL __setbit
+	RJMP _0x62
+; 0000 022E     }
+; 0000 022F     else
+_0x56:
+; 0000 0230     {
+; 0000 0231         dac_reg[2]=_clrbit(dac_reg[2],0);
+	RCALL SUBOPT_0x1C
+	RCALL __clrbit
+_0x62:
 	__PUTB1MN _dac_reg,2
-; 0000 022F     }
-; 0000 0230     Write_To_DAC(i2c_address,1,dac_reg[1]);
+; 0000 0232     }
+; 0000 0233     Write_To_DAC(i2c_address,1,dac_reg[1]);
 	ST   -Y,R8
-	RCALL SUBOPT_0xC
-	RCALL SUBOPT_0x11
-; 0000 0231     Write_To_DAC(i2c_address,2,dac_reg[2]);
-; 0000 0232     Write_To_DAC(i2c_address,5,dac_reg[5]);
-; 0000 0233 
-; 0000 0234     ResetChip();
-	RCALL _ResetChip
-; 0000 0235 }
+	RCALL SUBOPT_0xE
+	RCALL SUBOPT_0x1A
+; 0000 0234     Write_To_DAC(i2c_address,2,dac_reg[2]);
+; 0000 0235     Write_To_DAC(i2c_address,5,dac_reg[5]);
+; 0000 0236 
+; 0000 0237 }
 	RET
 ; .FEND
 ;
 ;void SW_Mute(unsigned char mute)
-; 0000 0238 {
+; 0000 023A {
 _SW_Mute:
 ; .FSTART _SW_Mute
-; 0000 0239     if(mute)
+; 0000 023B     if(mute)
 	ST   -Y,R26
 ;	mute -> Y+0
 	LD   R30,Y
 	CPI  R30,0
-	BREQ _0x56
-; 0000 023A     {
-; 0000 023B         dac_reg[1]=_setbit(dac_reg[1],0);
-	__GETB1MN _dac_reg,1
-	RCALL SUBOPT_0x10
-	RJMP _0x61
-; 0000 023C         //printf("Mute\n\r");
-; 0000 023D     }
-; 0000 023E     else
-_0x56:
-; 0000 023F     {
-; 0000 0240         dac_reg[1]=_clrbit(dac_reg[1],0);
-	__GETB1MN _dac_reg,1
-	RCALL SUBOPT_0x14
-_0x61:
+	BREQ _0x58
+; 0000 023C     {
+; 0000 023D         dac_reg[1]=_setbit(dac_reg[1],0);
+	RCALL SUBOPT_0x18
+	LDI  R26,LOW(0)
+	RCALL __setbit
+	RJMP _0x63
+; 0000 023E         //printf("Mute\n\r");
+; 0000 023F     }
+; 0000 0240     else
+_0x58:
+; 0000 0241     {
+; 0000 0242         dac_reg[1]=_clrbit(dac_reg[1],0);
+	RCALL SUBOPT_0x18
+	LDI  R26,LOW(0)
+	RCALL __clrbit
+_0x63:
 	__PUTB1MN _dac_reg,1
-; 0000 0241         //printf("UnMute\r\n");
-; 0000 0242     };
-; 0000 0243     Write_To_DAC(i2c_address,1,dac_reg[1]);
+; 0000 0243         //printf("UnMute\r\n");
+; 0000 0244     };
+; 0000 0245     Write_To_DAC(i2c_address,1,dac_reg[1]);
 	ST   -Y,R8
-	RCALL SUBOPT_0xC
+	RCALL SUBOPT_0xE
 	__GETB2MN _dac_reg,1
 	RCALL _Write_To_DAC
-; 0000 0244 }
+; 0000 0246 }
 _0x2080004:
 	ADIW R28,1
 	RET
@@ -2569,7 +2589,7 @@ _0x2080004:
 	.CSEG
 _put_usart_G100:
 ; .FSTART _put_usart_G100
-	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x1D
 	LDD  R26,Y+2
 	RCALL _putchar
 	LD   R26,Y
@@ -2583,7 +2603,7 @@ _put_usart_G100:
 ; .FEND
 __print_G100:
 ; .FSTART __print_G100
-	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x1D
 	SBIW R28,6
 	RCALL __SAVELOCR6
 	LDI  R17,0
@@ -2613,7 +2633,7 @@ _0x2000016:
 	LDI  R17,LOW(1)
 	RJMP _0x200001E
 _0x200001D:
-	RCALL SUBOPT_0x17
+	RCALL SUBOPT_0x1E
 _0x200001E:
 	RJMP _0x200001B
 _0x200001C:
@@ -2621,7 +2641,7 @@ _0x200001C:
 	BRNE _0x200001F
 	CPI  R18,37
 	BRNE _0x2000020
-	RCALL SUBOPT_0x17
+	RCALL SUBOPT_0x1E
 	RJMP _0x20000CC
 _0x2000020:
 	LDI  R17,LOW(2)
@@ -2678,26 +2698,26 @@ _0x2000029:
 	MOV  R30,R18
 	CPI  R30,LOW(0x63)
 	BRNE _0x200002F
-	RCALL SUBOPT_0x18
-	RCALL SUBOPT_0x19
-	RCALL SUBOPT_0x18
+	RCALL SUBOPT_0x1F
+	RCALL SUBOPT_0x20
+	RCALL SUBOPT_0x1F
 	LDD  R26,Z+4
 	ST   -Y,R26
-	RCALL SUBOPT_0x1A
+	RCALL SUBOPT_0x21
 	RJMP _0x2000030
 _0x200002F:
 	CPI  R30,LOW(0x73)
 	BRNE _0x2000032
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x1C
+	RCALL SUBOPT_0x22
+	RCALL SUBOPT_0x23
 	RCALL _strlen
 	MOV  R17,R30
 	RJMP _0x2000033
 _0x2000032:
 	CPI  R30,LOW(0x70)
 	BRNE _0x2000035
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x1C
+	RCALL SUBOPT_0x22
+	RCALL SUBOPT_0x23
 	RCALL _strlenf
 	MOV  R17,R30
 	ORI  R16,LOW(8)
@@ -2720,7 +2740,7 @@ _0x200003A:
 _0x200003B:
 	LDI  R30,LOW(_tbl10_G100*2)
 	LDI  R31,HIGH(_tbl10_G100*2)
-	RCALL SUBOPT_0x1D
+	RCALL SUBOPT_0x24
 	LDI  R17,LOW(5)
 	RJMP _0x200003D
 _0x200003C:
@@ -2735,13 +2755,13 @@ _0x200003F:
 _0x2000040:
 	LDI  R30,LOW(_tbl16_G100*2)
 	LDI  R31,HIGH(_tbl16_G100*2)
-	RCALL SUBOPT_0x1D
+	RCALL SUBOPT_0x24
 	LDI  R17,LOW(4)
 _0x200003D:
 	SBRS R16,2
 	RJMP _0x2000042
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x1E
+	RCALL SUBOPT_0x22
+	RCALL SUBOPT_0x25
 	LDD  R26,Y+11
 	TST  R26
 	BRPL _0x2000043
@@ -2761,8 +2781,8 @@ _0x2000044:
 _0x2000045:
 	RJMP _0x2000046
 _0x2000042:
-	RCALL SUBOPT_0x1B
-	RCALL SUBOPT_0x1E
+	RCALL SUBOPT_0x22
+	RCALL SUBOPT_0x25
 _0x2000046:
 _0x2000036:
 	SBRC R16,0
@@ -2785,7 +2805,7 @@ _0x200004D:
 _0x200004B:
 	LDI  R18,LOW(32)
 _0x200004E:
-	RCALL SUBOPT_0x17
+	RCALL SUBOPT_0x1E
 	SUBI R21,LOW(1)
 	RJMP _0x2000048
 _0x200004A:
@@ -2801,7 +2821,7 @@ _0x2000050:
 	LDD  R30,Y+6
 	LDD  R31,Y+6+1
 	LPM  R18,Z+
-	RCALL SUBOPT_0x1D
+	RCALL SUBOPT_0x24
 	RJMP _0x2000054
 _0x2000053:
 	LDD  R26,Y+6
@@ -2810,7 +2830,7 @@ _0x2000053:
 	STD  Y+6,R26
 	STD  Y+6+1,R27
 _0x2000054:
-	RCALL SUBOPT_0x17
+	RCALL SUBOPT_0x1E
 	CPI  R21,0
 	BREQ _0x2000055
 	SUBI R21,LOW(1)
@@ -2830,7 +2850,7 @@ _0x2000058:
 	LDD  R30,Y+6
 	LDD  R31,Y+6+1
 	ADIW R30,2
-	RCALL SUBOPT_0x1D
+	RCALL SUBOPT_0x24
 _0x200005A:
 	LDD  R30,Y+8
 	LDD  R31,Y+8+1
@@ -2888,7 +2908,7 @@ _0x20000CD:
 	RJMP _0x200006A
 	ANDI R16,LOW(251)
 	ST   -Y,R20
-	RCALL SUBOPT_0x1A
+	RCALL SUBOPT_0x21
 	CPI  R21,0
 	BREQ _0x200006B
 	SUBI R21,LOW(1)
@@ -2896,7 +2916,7 @@ _0x200006B:
 _0x200006A:
 _0x2000069:
 _0x2000061:
-	RCALL SUBOPT_0x17
+	RCALL SUBOPT_0x1E
 	CPI  R21,0
 	BREQ _0x200006C
 	SUBI R21,LOW(1)
@@ -2918,7 +2938,7 @@ _0x200006E:
 	SUBI R21,LOW(1)
 	LDI  R30,LOW(32)
 	ST   -Y,R30
-	RCALL SUBOPT_0x1A
+	RCALL SUBOPT_0x21
 	RJMP _0x200006E
 _0x2000070:
 _0x200006D:
@@ -2986,7 +3006,7 @@ _printf:
 	.CSEG
 _twi_master_init:
 ; .FSTART _twi_master_init
-	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x1D
 	ST   -Y,R17
 	SBI  0x1E,2
 	LDI  R30,LOW(7)
@@ -3090,7 +3110,7 @@ _0x202000F:
 	ORI  R30,LOW(0xA0)
 	STS  188,R30
 	__GETD1N 0x7A120
-	RCALL SUBOPT_0x1F
+	RCALL SUBOPT_0x26
 _0x2020016:
 	SBIC 0x1E,2
 	RJMP _0x2020018
@@ -3098,7 +3118,7 @@ _0x2020016:
 	SBIW R30,1
 	SBCI R22,0
 	SBCI R23,0
-	RCALL SUBOPT_0x1F
+	RCALL SUBOPT_0x26
 	BRNE _0x2020019
 	LDI  R30,LOW(5)
 	STS  _twi_result,R30
@@ -3498,7 +3518,7 @@ _0x2020022:
 	.CSEG
 _strlen:
 ; .FSTART _strlen
-	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x1D
     ld   r26,y+
     ld   r27,y+
     clr  r30
@@ -3514,7 +3534,7 @@ strlen1:
 ; .FEND
 _strlenf:
 ; .FSTART _strlenf
-	RCALL SUBOPT_0x16
+	RCALL SUBOPT_0x1D
     clr  r26
     clr  r27
     ld   r30,y+
@@ -3596,7 +3616,7 @@ SUBOPT_0x3:
 	LDS  R30,_tx_counter0
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 7 TIMES, CODE SIZE REDUCTION:4 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:2 WORDS
 SUBOPT_0x4:
 	LDI  R27,0
 	RJMP _delay_ms
@@ -3617,7 +3637,7 @@ SUBOPT_0x6:
 	LDI  R31,0
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 14 TIMES, CODE SIZE REDUCTION:11 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 13 TIMES, CODE SIZE REDUCTION:10 WORDS
 SUBOPT_0x7:
 	ST   -Y,R31
 	ST   -Y,R30
@@ -3630,8 +3650,20 @@ SUBOPT_0x8:
 	ADIW R28,2
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 6 TIMES, CODE SIZE REDUCTION:13 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
 SUBOPT_0x9:
+	LDI  R26,LOW(1)
+	RJMP _ResetChip
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+SUBOPT_0xA:
+	LDI  R26,LOW(0)
+	RCALL _ResetChip
+	LDI  R26,LOW(1)
+	RJMP _SW_Mute
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:7 WORDS
+SUBOPT_0xB:
 	CLR  R31
 	CLR  R22
 	CLR  R23
@@ -3639,7 +3671,7 @@ SUBOPT_0x9:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
-SUBOPT_0xA:
+SUBOPT_0xC:
 	LDD  R30,Y+5
 	ST   -Y,R30
 	MOVW R30,R28
@@ -3647,46 +3679,100 @@ SUBOPT_0xA:
 	RJMP SUBOPT_0x7
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0xB:
+SUBOPT_0xD:
 	RCALL SUBOPT_0x7
 	RJMP SUBOPT_0x8
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0xC:
+SUBOPT_0xE:
 	LDI  R30,LOW(1)
 	ST   -Y,R30
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0xD:
+SUBOPT_0xF:
 	__GETB1MN _dac_reg,2
 	ST   -Y,R30
 	LDI  R26,LOW(7)
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:7 WORDS
-SUBOPT_0xE:
+SUBOPT_0x10:
 	__GETB1MN _dac_reg,6
 	ST   -Y,R30
 	LDI  R26,LOW(0)
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:4 WORDS
-SUBOPT_0xF:
+SUBOPT_0x11:
+	RCALL __clrbit
 	__PUTB1MN _dac_reg,6
 	__GETB1MN _dac_reg,9
 	ST   -Y,R30
 	LDI  R26,LOW(0)
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:4 WORDS
+SUBOPT_0x12:
+	RCALL __clrbit
+	__PUTB1MN _dac_reg,9
+	__GETB1MN _dac_reg,1
+	ST   -Y,R30
+	LDI  R26,LOW(3)
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 6 TIMES, CODE SIZE REDUCTION:8 WORDS
+SUBOPT_0x13:
+	RCALL __clrbit
+	__PUTB1MN _dac_reg,1
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:6 WORDS
+SUBOPT_0x14:
+	__GETB1MN _dac_reg,1
+	ST   -Y,R30
+	LDI  R26,LOW(4)
+	RJMP SUBOPT_0x13
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:6 WORDS
+SUBOPT_0x15:
+	__GETB1MN _dac_reg,5
+	ST   -Y,R30
+	LDI  R26,LOW(1)
 	RJMP __clrbit
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:4 WORDS
-SUBOPT_0x10:
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:4 WORDS
+SUBOPT_0x16:
+	RCALL __setbit
+	__PUTB1MN _dac_reg,6
+	__GETB1MN _dac_reg,9
 	ST   -Y,R30
 	LDI  R26,LOW(0)
-	RJMP __setbit
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:5 WORDS
+SUBOPT_0x17:
+	RCALL __setbit
+	__PUTB1MN _dac_reg,9
+	__GETB1MN _dac_reg,1
+	ST   -Y,R30
+	LDI  R26,LOW(3)
+	RJMP SUBOPT_0x13
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:6 WORDS
+SUBOPT_0x18:
+	__GETB1MN _dac_reg,1
+	ST   -Y,R30
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:2 WORDS
+SUBOPT_0x19:
+	__GETB1MN _dac_reg,5
+	ST   -Y,R30
+	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:12 WORDS
-SUBOPT_0x11:
+SUBOPT_0x1A:
 	__GETB2MN _dac_reg,1
 	RCALL _Write_To_DAC
 	ST   -Y,R8
@@ -3701,7 +3787,7 @@ SUBOPT_0x11:
 	RJMP _Write_To_DAC
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
-SUBOPT_0x12:
+SUBOPT_0x1B:
 	ST   -Y,R8
 	LDI  R30,LOW(0)
 	ST   -Y,R30
@@ -3709,33 +3795,20 @@ SUBOPT_0x12:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x13:
-	MOV  R26,R30
-	RCALL _Write_To_DAC
-	LDI  R26,LOW(50)
-	RJMP SUBOPT_0x4
-
-;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:2 WORDS
-SUBOPT_0x14:
+SUBOPT_0x1C:
+	__GETB1MN _dac_reg,2
 	ST   -Y,R30
 	LDI  R26,LOW(0)
-	RJMP __clrbit
-
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x15:
-	__GETB1MN _dac_reg,1
-	ST   -Y,R30
-	LDI  R26,LOW(5)
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:2 WORDS
-SUBOPT_0x16:
+SUBOPT_0x1D:
 	ST   -Y,R27
 	ST   -Y,R26
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:18 WORDS
-SUBOPT_0x17:
+SUBOPT_0x1E:
 	ST   -Y,R18
 	LDD  R26,Y+13
 	LDD  R27,Y+13+1
@@ -3745,20 +3818,20 @@ SUBOPT_0x17:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 6 TIMES, CODE SIZE REDUCTION:3 WORDS
-SUBOPT_0x18:
+SUBOPT_0x1F:
 	LDD  R30,Y+16
 	LDD  R31,Y+16+1
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:6 WORDS
-SUBOPT_0x19:
+SUBOPT_0x20:
 	SBIW R30,4
 	STD  Y+16,R30
 	STD  Y+16+1,R31
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:6 WORDS
-SUBOPT_0x1A:
+SUBOPT_0x21:
 	LDD  R26,Y+13
 	LDD  R27,Y+13+1
 	LDD  R30,Y+15
@@ -3767,12 +3840,12 @@ SUBOPT_0x1A:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x1B:
-	RCALL SUBOPT_0x18
-	RJMP SUBOPT_0x19
+SUBOPT_0x22:
+	RCALL SUBOPT_0x1F
+	RJMP SUBOPT_0x20
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x1C:
+SUBOPT_0x23:
 	LDD  R26,Y+16
 	LDD  R27,Y+16+1
 	ADIW R26,4
@@ -3784,13 +3857,13 @@ SUBOPT_0x1C:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x1D:
+SUBOPT_0x24:
 	STD  Y+6,R30
 	STD  Y+6+1,R31
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
-SUBOPT_0x1E:
+SUBOPT_0x25:
 	LDD  R26,Y+16
 	LDD  R27,Y+16+1
 	ADIW R26,4
@@ -3800,7 +3873,7 @@ SUBOPT_0x1E:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x1F:
+SUBOPT_0x26:
 	RCALL __PUTD1S0
 	RET
 
